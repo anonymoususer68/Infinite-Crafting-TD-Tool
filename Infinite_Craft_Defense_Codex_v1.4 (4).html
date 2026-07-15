@@ -1,0 +1,1390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Infinite Craft Defense — Forge Codex</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#12151c; --bg2:#181c26; --panel:#1e2331; --panel2:#242a3b; --line:#323a52;
+  --ink:#dfe4f0; --dim:#8b94ad; --faint:#5b6380;
+  --ember:#e8913a; --ember2:#f5b56a;
+  --fire:#ff7a52; --water:#5db9f0; --earth:#9dbd6a; --wind:#9fb6c9;
+  --t0:#7c8598; --t1:#8fb872; --t2:#5db9f0; --t3:#b085e0; --t4:#e8913a; --t5:#ef6a6a; --t6:#f0c95c;
+  --radius:10px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background:var(--bg); color:var(--ink);
+  font-family:'IBM Plex Sans',system-ui,sans-serif; font-size:15px; line-height:1.55;
+  background-image:
+    radial-gradient(1200px 500px at 70% -10%, rgba(232,145,58,.07), transparent 60%),
+    radial-gradient(900px 400px at 0% 110%, rgba(93,185,240,.05), transparent 60%);
+}
+a{color:var(--ember2)}
+.wrap{max-width:1180px;margin:0 auto;padding:26px 20px 80px}
+
+/* ---------- header ---------- */
+header{display:flex;align-items:baseline;gap:18px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:18px}
+h1{font-family:'Cinzel',serif;font-weight:900;font-size:30px;letter-spacing:.06em;color:var(--ember2)}
+h1 .sub{display:block;font-size:12px;letter-spacing:.35em;color:var(--dim);font-weight:500;margin-top:2px}
+.headstats{margin-left:auto;display:flex;gap:20px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--dim)}
+.headstats b{color:var(--ink);font-size:16px;display:block}
+
+/* ---------- tabs ---------- */
+nav{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:22px}
+nav button{
+  background:var(--panel);border:1px solid var(--line);color:var(--dim);
+  padding:9px 16px;border-radius:8px;cursor:pointer;font:inherit;font-weight:600;font-size:13.5px;
+  letter-spacing:.02em;transition:all .15s;
+}
+nav button:hover{color:var(--ink);border-color:var(--ember)}
+nav button.on{background:linear-gradient(180deg,#2a2216,#241d13);border-color:var(--ember);color:var(--ember2)}
+nav button:focus-visible{outline:2px solid var(--ember2);outline-offset:2px}
+.tab{display:none}.tab.on{display:block}
+
+/* ---------- common ---------- */
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px}
+h2{font-family:'Cinzel',serif;font-size:18px;letter-spacing:.05em;color:var(--ink);margin-bottom:10px}
+h3{font-size:13px;text-transform:uppercase;letter-spacing:.14em;color:var(--dim);margin:16px 0 8px}
+.muted{color:var(--dim);font-size:13.5px}
+input[type=text],select{
+  background:var(--bg2);border:1px solid var(--line);color:var(--ink);border-radius:8px;
+  padding:10px 12px;font:inherit;width:100%;
+}
+input:focus,select:focus{outline:none;border-color:var(--ember)}
+.row{display:flex;gap:14px;flex-wrap:wrap}
+.grow{flex:1 1 260px}
+
+/* element chip */
+.chip{
+  display:inline-flex;align-items:center;gap:7px;background:var(--panel2);border:1px solid var(--line);
+  border-radius:999px;padding:5px 13px 5px 8px;cursor:pointer;font-weight:600;font-size:13.5px;color:var(--ink);
+  transition:transform .1s,border-color .15s;user-select:none;
+}
+.chip:hover{transform:translateY(-1px);border-color:var(--ember)}
+.chip .dot{width:9px;height:9px;border-radius:50%;flex:none}
+.chip.base{border-style:dashed}
+.chip.sm{padding:2px 10px 2px 6px;font-size:12.5px}
+.tierdot-0{background:var(--t0)}.tierdot-1{background:var(--t1)}.tierdot-2{background:var(--t2)}
+.tierdot-3{background:var(--t3)}.tierdot-4{background:var(--t4)}.tierdot-5{background:var(--t5)}
+.tierdot-6{background:var(--t6)}.tierdot-x{background:#666;outline:1px dashed #999}
+
+.badge{font-family:'IBM Plex Mono',monospace;font-size:11px;padding:2px 8px;border-radius:5px;border:1px solid var(--line);color:var(--dim)}
+
+/* ---------- explorer ---------- */
+#grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.tiergroup{width:100%;margin-top:10px}
+.tiergroup .tlabel{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.2em;color:var(--dim);margin-bottom:7px;text-transform:uppercase}
+.tiergroup .tchips{display:flex;flex-wrap:wrap;gap:8px}
+
+#detail{margin-top:18px}
+.detailhead{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.detailhead .name{font-family:'Cinzel',serif;font-size:26px;font-weight:700;letter-spacing:.04em}
+.formula{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--bg2);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-top:12px;font-size:15px}
+.formula .op{color:var(--ember);font-family:'IBM Plex Mono',monospace;font-weight:600}
+
+/* tree */
+.tree{font-family:'IBM Plex Mono',monospace;font-size:13.5px;margin-top:6px}
+.tree ul{list-style:none;padding-left:22px;border-left:1px solid var(--line);margin-left:9px}
+.tree li{margin:5px 0;position:relative}
+.tree li::before{content:'';position:absolute;left:-22px;top:11px;width:16px;height:1px;background:var(--line)}
+.tnode{display:inline-flex;align-items:center;gap:6px;cursor:pointer;padding:1px 4px;border-radius:5px}
+.tnode:hover{background:var(--panel2)}
+.tnode .dot{width:8px;height:8px;border-radius:50%}
+.tnode.baseleaf{color:var(--dim)}
+.caret{color:var(--faint);width:12px;display:inline-block;text-align:center}
+.assume{color:#c9a44a;font-size:11px;margin-left:6px}
+
+/* ---------- path ---------- */
+.steps{counter-reset:s;margin-top:14px}
+.step{
+  display:flex;align-items:center;gap:12px;background:var(--panel2);border:1px solid var(--line);
+  border-radius:8px;padding:10px 14px;margin-bottom:8px;
+}
+.step::before{
+  counter-increment:s;content:counter(s,decimal-leading-zero);
+  font-family:'IBM Plex Mono',monospace;color:var(--ember);font-size:13px;min-width:26px;
+}
+.step .eq{color:var(--faint);font-family:'IBM Plex Mono',monospace}
+.step .result{font-weight:600}
+.pathmeta{font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--dim);margin-top:10px}
+
+/* ---------- table ---------- */
+table{width:100%;border-collapse:collapse;margin-top:14px;font-size:14px}
+th{
+  text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.13em;color:var(--dim);
+  border-bottom:1px solid var(--line);padding:8px 10px;cursor:pointer;user-select:none;white-space:nowrap;
+}
+th:hover{color:var(--ember2)}
+td{padding:7px 10px;border-bottom:1px solid #262c3e}
+tr:hover td{background:rgba(232,145,58,.04)}
+td .lnk{cursor:pointer;font-weight:600}
+td .lnk:hover{color:var(--ember2)}
+
+/* ---------- guide ---------- */
+.guide p{margin-bottom:10px;max-width:78ch}
+.statgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:14px 0}
+.stat{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:12px 14px}
+.stat b{font-family:'Cinzel',serif;font-size:22px;color:var(--ember2);display:block}
+.stat span{font-size:12.5px;color:var(--dim)}
+.bar{display:flex;align-items:center;gap:10px;margin:5px 0;font-size:13px}
+.bar .lbl{width:90px;font-family:'IBM Plex Mono',monospace;color:var(--dim);text-align:right}
+.bar .fill{height:14px;border-radius:3px;min-width:2px}
+.bar .n{font-family:'IBM Plex Mono',monospace;color:var(--dim);font-size:12px}
+.note{border-left:3px solid var(--ember);background:rgba(232,145,58,.06);padding:10px 14px;border-radius:0 8px 8px 0;margin:12px 0;font-size:13.5px}
+.warn{border-left-color:#ef6a6a;background:rgba(239,106,106,.06)}
+
+/* ---------- add ---------- */
+.addform{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-top:12px}
+.addform label{font-size:12px;text-transform:uppercase;letter-spacing:.1em;color:var(--dim);display:block;margin-bottom:5px}
+.btn{
+  background:linear-gradient(180deg,var(--ember),#c9741f);border:none;color:#1a1206;font:inherit;font-weight:700;
+  padding:10px 20px;border-radius:8px;cursor:pointer;letter-spacing:.02em;
+}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:var(--panel2);color:var(--ink);border:1px solid var(--line)}
+#addmsg{margin-top:10px;font-size:13.5px}
+.newtag{font-size:10px;background:var(--ember);color:#1a1206;border-radius:4px;padding:1px 6px;font-weight:700;letter-spacing:.05em;vertical-align:middle}
+
+
+/* ---------- my stock ---------- */
+.chip.have{background:linear-gradient(180deg,#2c2517,#241d13);border-color:var(--ember);color:var(--ember2)}
+.chip.have .dot{box-shadow:0 0 6px var(--ember)}
+.stockbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;align-items:center}
+.craftrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:9px 13px;margin-bottom:7px}
+.craftrow .eq{color:var(--faint);font-family:'IBM Plex Mono',monospace}
+.craftrow .res{font-weight:600;cursor:pointer}
+.craftrow .res:hover{color:var(--ember2)}
+.craftrow.oneaway{border-left:3px solid #c9a44a}
+.needchip{outline:1px dashed #c9a44a;outline-offset:1px;border-radius:999px}
+.craftbtn{margin-left:auto;background:var(--panel);border:1px solid var(--line);color:var(--dim);font:inherit;font-size:12px;padding:4px 12px;border-radius:6px;cursor:pointer}
+.craftbtn:hover{border-color:var(--ember);color:var(--ember2)}
+.distrow{display:flex;align-items:center;gap:10px;font-size:13.5px;margin:4px 0}
+.distrow .n{font-family:'IBM Plex Mono',monospace;color:var(--ember);min-width:70px}
+.owncount{font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--dim)}
+
+
+.bench{min-height:96px;border:2px dashed var(--line);border-radius:10px;background:var(--bg2);margin-top:12px;padding:14px;transition:border-color .15s,background .15s;position:relative}
+.bench.dragover{border-color:var(--ember);background:rgba(232,145,58,.07)}
+.benchhint{color:var(--faint);font-family:'IBM Plex Mono',monospace;font-size:13px;position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
+.benchchips{display:flex;flex-wrap:wrap;gap:8px;position:relative;z-index:1}
+.bench .chip:hover{border-color:#ef6a6a}
+.chip.dragging{opacity:.4}
+.chip.inbench{opacity:.35;pointer-events:none}
+
+
+.qty{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--ember2);margin-left:2px}
+.qbtn{background:none;border:none;color:var(--dim);cursor:pointer;font:inherit;font-size:14px;padding:0 3px;line-height:1}
+.qbtn:hover{color:var(--ember2)}
+.bench .chip{cursor:default}
+.bench .chip:hover{border-color:var(--line)}
+.needlist{font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:#c9a44a}
+
+
+.pathwrap{margin-bottom:7px;position:relative}
+.pathpanel{display:none;position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:40;background:var(--panel);border:1px solid var(--ember);border-radius:8px;padding:10px 14px 12px;box-shadow:0 10px 30px rgba(0,0,0,.55)}
+.pathwrap.open .pathpanel{display:block}
+.pathwrap .distrow{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:9px 13px;margin:0;cursor:pointer}
+.pathwrap .craftrow{margin:0;cursor:pointer}
+.ptlegend{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--dim);margin-bottom:6px;letter-spacing:.03em}
+.pt-have{color:var(--ember2)}
+.pt-craft{color:var(--ink)}
+.pt-missing{color:#c9a44a}
+.pt-missing .ptname{border-bottom:1px dashed #c9a44a}
+.pt-locked{color:#ef6a6a}
+.pt-locked .ptname{text-decoration:line-through;text-decoration-color:rgba(239,106,106,.6)}
+.ptmark{display:inline-block;width:16px;font-family:'IBM Plex Mono',monospace}
+.chip.locked{border-color:#6e3a3a;color:#b98a8a;background:#251c1e}
+.chip.locked .dot{opacity:.4}
+.lockmode-on{border-color:#ef6a6a!important;color:#ef9a9a!important}
+.starbtn{background:none;border:none;color:var(--dim);cursor:pointer;font-size:15px;padding:0 4px;line-height:1}
+.starbtn:hover{color:var(--ember2)}
+
+.pathpanel{max-height:420px;overflow-y:auto}
+.ptdivider{border-top:1px solid var(--line);margin:10px 0 8px}
+.fw-arrow{color:var(--faint);font-family:'IBM Plex Mono',monospace}
+.fw-partner{font-size:12px;color:var(--dim);font-family:'IBM Plex Mono',monospace}
+.fw-partner.haveit{color:var(--ember2)}
+.fw-more{color:var(--faint);font-size:12px;font-family:'IBM Plex Mono',monospace;font-style:italic}
+
+
+/* focus / allocation */
+.focusband{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:rgba(232,145,58,.09);border:1px solid var(--ember);border-radius:8px;padding:8px 13px;margin-top:10px;font-size:13.5px}
+.focusband .fx{font-family:'IBM Plex Mono',monospace;color:var(--ember2)}
+.rsv{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#c9a44a}
+.focusbtn{background:none;border:1px solid var(--line);border-radius:6px;color:var(--dim);cursor:pointer;font:inherit;font-size:12px;padding:3px 10px}
+.focusbtn:hover{border-color:var(--ember);color:var(--ember2)}
+.focusbtn.on{border-color:var(--ember);color:var(--ember2);background:rgba(232,145,58,.12)}
+/* popup navigation */
+.ptcrumb{display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+.ptback{background:none;border:1px solid var(--line);border-radius:6px;color:var(--dim);cursor:pointer;font:inherit;font-size:12px;padding:2px 9px}
+.ptback:hover{border-color:var(--ember);color:var(--ember2)}
+.ptroot{font-family:'Cinzel',serif;font-size:14px;color:var(--ember2);letter-spacing:.04em}
+.tnode .ptname.navable{cursor:pointer}
+.tnode .ptname.navable:hover{text-decoration:underline;color:var(--ember2)}
+/* favorites bar */
+#favbar{position:fixed;right:14px;top:120px;width:158px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px;z-index:60;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.favtitle{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.22em;color:var(--dim);margin-bottom:8px}
+.favitem{display:flex;align-items:center;gap:6px;padding:5px 4px;border-radius:6px;cursor:pointer;font-size:13px}
+.favitem:hover{background:var(--panel2)}
+.favitem .dot{width:8px;height:8px;border-radius:50%;flex:none}
+.favitem .fname{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
+.favstat{font-family:'IBM Plex Mono',monospace;font-size:10px;white-space:nowrap}
+.favx{background:none;border:none;color:var(--faint);cursor:pointer;font-size:11px;padding:0 2px;visibility:hidden}
+.favitem:hover .favx{visibility:visible}
+.favadd{display:flex;gap:4px;margin-top:8px;border-top:1px solid var(--line);padding-top:8px}
+.favadd input{background:var(--bg2);border:1px solid var(--line);color:var(--ink);border-radius:6px;padding:4px 8px;font:inherit;font-size:12px;width:100%;min-width:0}
+@media(max-width:1520px){
+  #favbar{top:auto;bottom:12px;right:12px;left:auto;width:158px}
+}
+@media(max-width:760px){
+  #favbar{position:fixed;bottom:0;left:0;right:0;width:auto;border-radius:12px 12px 0 0;display:flex;align-items:center;gap:6px;padding:8px 12px;overflow-x:auto}
+  .favtitle{margin:0;flex:none}
+  #favlist{display:flex;gap:4px}
+  .favitem{flex:none}
+  .favadd{border:none;padding:0;margin:0;flex:none;width:120px}
+  body{padding-bottom:64px}
+}
+
+
+.upmark{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--dim);margin-left:2px}
+.endmark{font-size:10px;color:var(--t6);margin-left:3px}
+.endmark.deadend{color:#ef6a6a}
+
+.qstatus-ok{color:#8fb872}.qstatus-short{color:#c9a44a}.qstatus-blocked{color:#ef6a6a}
+.brokenbadge{font-size:10px;background:#3a2626;color:#ef9a9a;border:1px solid #6e3a3a;border-radius:4px;padding:1px 6px;font-weight:700;letter-spacing:.05em;vertical-align:middle}
+
+@media(max-width:640px){
+  h1{font-size:23px}
+  .headstats{width:100%;margin-left:0}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>FORGE CODEX<span class="sub">INFINITE CRAFT DEFENSE · RECIPE DASHBOARD · v1.4 (JUNE 2026)</span></h1>
+  <div class="headstats">
+    <div><b id="hs-el">–</b>elements</div>
+    <div><b id="hs-rec">–</b>recipes</div>
+    <div><b id="hs-tier">–</b>max tier</div>
+  </div>
+</header>
+
+<nav>
+  <button data-tab="explore" class="on">Explorer</button>
+  <button data-tab="path">Craft Path</button>
+  <button data-tab="db">Database</button>
+  <button data-tab="stock">My Stock</button>
+  <button data-tab="guide">Guide &amp; Stats</button>
+  <button data-tab="add">Add Recipe</button>
+</nav>
+
+<!-- ================= EXPLORER ================= -->
+<section class="tab on" id="tab-explore">
+  <div class="card">
+    <div class="row">
+      <div class="grow"><input type="text" id="q" placeholder="Search elements… (e.g. laser, wall, sword)"></div>
+      <div style="flex:0 0 200px"><select id="tierfilter"><option value="">All tiers</option></select></div>
+    </div>
+    <div id="grid"></div>
+  </div>
+  <div id="detail"></div>
+</section>
+
+<!-- ================= PATH ================= -->
+<section class="tab" id="tab-path">
+  <div class="card">
+    <h2>Crafting Path</h2>
+    <p class="muted">Pick a target and get the full ordered build sequence from the four base elements. Each intermediate is crafted exactly once.</p>
+    <div class="row" style="margin-top:12px">
+      <div class="grow"><select id="pathtarget"></select></div>
+    </div>
+    <div id="pathout"></div>
+  </div>
+</section>
+
+<!-- ================= DATABASE ================= -->
+<section class="tab" id="tab-db">
+  <div class="card">
+    <div class="row">
+      <div class="grow"><input type="text" id="dbq" placeholder="Filter the full database… matches element or ingredients"></div>
+    </div>
+    <div style="overflow-x:auto">
+    <table id="dbt">
+      <thead><tr>
+        <th data-k="element">Element</th><th data-k="tier">Tier</th>
+        <th data-k="i1">Ingredient 1</th><th data-k="i2">Ingredient 2</th>
+        <th data-k="alt">Alt Recipe</th><th data-k="steps">Min Steps</th><th data-k="uses">Used In</th>
+      </tr></thead>
+      <tbody></tbody>
+    </table>
+    </div>
+  </div>
+</section>
+
+
+<!-- ================= WORKBENCH ================= -->
+<section class="tab" id="tab-stock">
+  <div class="card">
+    <h2>Workbench</h2>
+    <p class="muted">Drag or tap elements into the bench — tap again for another copy. Quantities matter: crafting <em>consumes</em> ingredients (blaze eats 2 fire). Use +/− on bench chips; − at ×1 removes it.</p>
+    <div id="bench" class="bench">
+      <div class="benchhint" id="benchhint">⟶ drop elements here</div>
+      <div class="benchchips" id="benchchips"></div>
+    </div>
+    <div id="focusbanner" style="display:none"></div>
+    <div class="stockbar">
+      <input type="text" id="stockpaste" placeholder="Paste with counts… e.g. fire x4, earth x2, water" style="flex:1 1 320px">
+      <button class="btn ghost" id="stock-import">Import list</button>
+      <button class="btn ghost" id="stock-clear">Clear bench</button>
+      <span class="owncount" id="owncount"></span>
+    </div>
+    <h3>Palette — drag or tap to add one</h3>
+    <div class="stockbar" style="margin-top:4px">
+      <input type="text" id="stockq" placeholder="Filter palette…" style="flex:1 1 220px">
+      <button class="btn ghost" id="lockmode">🔒 Lock mode: off</button>
+      <span class="owncount" id="lockcount"></span>
+    </div>
+    <p class="muted" id="lockhint" style="margin-top:6px">Chip markers: <span class="upmark">›N</span> feeds N recipes (upgradeable) · <span class="endmark">◆</span> terminal · <span class="endmark deadend">◆</span> dead-end (only upgrade is broken). Locked elements (🔒) can't be crafted or used — for combos gated behind gold-star levels. Turn on Lock mode, then tap palette chips to lock/unlock. Plating, plague, and laser start locked; unlock them when your level allows.</p>
+    <div id="stockgrid"></div>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <h2>Target queue</h2>
+    <p class="muted">Append the elements you're gunning for <em>this run</em>. The queue re-ranks live against your bench — cheapest path first — so it tells you the best thing to chase with what you actually have, not a static favorites list. Use the ☆ on any row below to queue it quickly.</p>
+    <div class="stockbar">
+      <select id="queuesel" style="flex:1 1 240px"></select>
+      <button class="btn" id="queueadd">Append ▸</button>
+      <button class="btn ghost" id="queueclear">Clear queue</button>
+    </div>
+    <div id="queuelist"></div>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <h2>Craftable right now</h2>
+    <p class="muted">Single combines your bench can pay for. ×N shows how many repeats are affordable. <em>Craft</em> consumes and adds the result.</p>
+    <div id="craftnow"></div>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <h2>Within reach — full chains</h2>
+    <p class="muted">Targets your bench can afford end-to-end. Hover (or tap) a row to preview the path: ✓ held · ⚒ crafted en route · ✗ needed · 🔒 locked.</p>
+    <div id="reachable"></div>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <h2>Building towards</h2>
+    <p class="muted">Targets you can't afford yet, nearest first, with the exact shopping list. Hover (or tap) for the full path preview.</p>
+    <div id="distlist"></div>
+  </div>
+</section>
+
+<!-- ================= GUIDE ================= -->
+<section class="tab" id="tab-guide">
+  <div class="card guide">
+    <h2>Game Guide</h2>
+    <p><strong>Infinite Craft Defense</strong> is a combine-two-elements crafting system built on the four classics — <span style="color:var(--fire)">fire</span>, <span style="color:var(--water)">water</span>, <span style="color:var(--earth)">earth</span>, <span style="color:var(--wind)">wind</span>. Every other element is forged by merging two things you already have, climbing tiers until you reach endgame gear like <strong>Mjolnir</strong> and <strong>Excalibur</strong>.</p>
+
+    <div class="note">This Codex reflects the <strong>v1.4 overhaul (June 2026)</strong> element list, organized by the game’s own official tiers. Note the official tier is a category, not a cost — glass is tier 1 but still needs crafted sand first — so use the <strong>Min Steps</strong> column in the Database tab for the true build cost. No public wiki exists for this game, so as you discover post-1.4 recipes, log them in the <strong>Add Recipe</strong> tab and export.</div>
+
+    <h3>By the numbers</h3>
+    <div class="statgrid" id="stats"></div>
+
+    <h3>Elements per tier</h3>
+    <div id="tierbars"></div>
+
+    <h3>Most-used ingredients</h3>
+    <p class="muted">Stockpile these — they appear in the most recipes.</p>
+    <div id="usebars"></div>
+
+    <h3>Strategy notes (derived from the recipe graph)</h3>
+    <div id="strategy"></div>
+
+    <h3>v1.4 changelog vs. your pre-overhaul database</h3>
+    <div class="note" id="dq"></div>
+  </div>
+</section>
+
+<!-- ================= ADD ================= -->
+<section class="tab" id="tab-add">
+  <div class="card">
+    <h2>Add a Recipe</h2>
+    <p class="muted">New recipes live for this session and flow into every tab instantly. Use <strong>Export JSON</strong> to save the updated database — this page can't write to disk on its own.</p>
+    <div class="addform">
+      <div><label>New element</label><input type="text" id="a-el" placeholder="e.g. thunderstorm"></div>
+      <div><label>Ingredient 1</label><input type="text" id="a-i1" placeholder="e.g. storm"></div>
+      <div><label>Ingredient 2</label><input type="text" id="a-i2" placeholder="e.g. lightning"></div>
+      <div><label>Alt recipe (optional)</label><input type="text" id="a-alt" placeholder="e.g. rain + thunder"></div>
+    </div>
+    <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn" id="a-add">Add recipe</button>
+      <button class="btn ghost" id="a-export">Export JSON</button>
+      <button class="btn ghost" id="a-csv">Export CSV</button>
+    </div>
+    <div id="addmsg"></div>
+    <h3 style="margin-top:20px">Added this session</h3>
+    <div id="addedlist" class="muted">Nothing yet.</div>
+  </div>
+</section>
+
+</div>
+
+<aside id="favbar">
+  <div class="favtitle">★ FAVORITES</div>
+  <div id="favlist"></div>
+  <div class="favadd">
+    <input type="text" id="favinput" placeholder="add…">
+    <button id="favaddbtn" class="qbtn" title="Add favorite">＋</button>
+  </div>
+</aside>
+
+<script>
+const RAW_RECIPES=[{"element":"bacteria","i1":"dust","i2":"water","alt":null,"tier":1},{"element":"blaze","i1":"fire","i2":"fire","alt":null,"tier":1},{"element":"drip","i1":"water","i2":"water","alt":null,"tier":1},{"element":"dust","i1":"wind","i2":"earth","alt":null,"tier":1},{"element":"flame","i1":"fire","i2":"wind","alt":null,"tier":1},{"element":"glass","i1":"sand","i2":"fire","alt":null,"tier":1},{"element":"gunpowder","i1":"dust","i2":"fire","alt":null,"tier":1},{"element":"gust","i1":"wind","i2":"wind","alt":null,"tier":1},{"element":"ice","i1":"water","i2":"snow","alt":null,"tier":1},{"element":"metal","i1":"fire","i2":"earth","alt":null,"tier":1},{"element":"mist","i1":"ice","i2":"fire","alt":null,"tier":1},{"element":"mud","i1":"earth","i2":"water","alt":null,"tier":1},{"element":"sand","i1":"dust","i2":"earth","alt":null,"tier":1},{"element":"spike","i1":"earth","i2":"stone","alt":null,"tier":1},{"element":"spire","i1":"fire","i2":"spike","alt":null,"tier":1},{"element":"sprout","i1":"water","i2":"mud","alt":null,"tier":1},{"element":"snow","i1":"water","i2":"wind","alt":null,"tier":1},{"element":"snowball","i1":"snow","i2":"wind","alt":null,"tier":1},{"element":"steam","i1":"fire","i2":"water","alt":null,"tier":1},{"element":"stone","i1":"earth","i2":"earth","alt":null,"tier":1},{"element":"wave","i1":"gust","i2":"water","alt":null,"tier":1},{"element":"whoosh","i1":"gust","i2":"wind","alt":null,"tier":1},{"element":"anvil","i1":"metal","i2":"metal","alt":null,"tier":2},{"element":"arrow","i1":"spike","i2":"vine","alt":null,"tier":2},{"element":"avalanche","i1":"snowball","i2":"snowball","alt":null,"tier":2},{"element":"blade","i1":"metal","i2":"whoosh","alt":null,"tier":2},{"element":"bomb","i1":"brick","i2":"gunpowder","alt":null,"tier":2},{"element":"bottle","i1":"glass","i2":"blaze","alt":null,"tier":2},{"element":"boulder","i1":"stone","i2":"stone","alt":null,"tier":2},{"element":"brick","i1":"blaze","i2":"mud","alt":null,"tier":2},{"element":"cactus","i1":"vine","i2":"sand","alt":null,"tier":2},{"element":"chain","i1":"vine","i2":"metal","alt":null,"tier":2},{"element":"cloud","i1":"steam","i2":"mist","alt":"gust+mist","tier":2},{"element":"desert","i1":"sand","i2":"gust","alt":null,"tier":2},{"element":"fireball","i1":"blaze","i2":"blaze","alt":null,"tier":2},{"element":"firewall","i1":"flame","i2":"wall","alt":null,"tier":2},{"element":"geyser","i1":"spike","i2":"steam","alt":null,"tier":2},{"element":"icicle","i1":"ice","i2":"spike","alt":null,"tier":2},{"element":"inferno","i1":"fireball","i2":"flame","alt":null,"tier":2},{"element":"landmine","i1":"bomb","i2":"earth","alt":null,"tier":2},{"element":"lava","i1":"stone","i2":"blaze","alt":null,"tier":2},{"element":"lightning","i1":"cloud","i2":"metal","alt":null,"tier":2},{"element":"molotov","i1":"bottle","i2":"fireball","alt":null,"tier":2},{"element":"obsidian","i1":"drip","i2":"lava","alt":null,"tier":2},{"element":"rain","i1":"cloud","i2":"drip","alt":null,"tier":2},{"element":"sea","i1":"waterfall","i2":"drip","alt":null,"tier":2},{"element":"shotgun","i1":"gunpowder","i2":"metal","alt":null,"tier":2},{"element":"spike field","i1":"spike","i2":"spike","alt":null,"tier":2},{"element":"stonewall","i1":"stone","i2":"mud","alt":null,"tier":2},{"element":"sun","i1":"inferno","i2":"stone","alt":null,"tier":2},{"element":"time","i1":"glass","i2":"sand","alt":null,"tier":2},{"element":"twister","i1":"gust","i2":"whoosh","alt":null,"tier":2},{"element":"plague","i1":"bacteria","i2":"gust","alt":null,"tier":2},{"element":"quake","i1":"spike","i2":"wave","alt":null,"tier":2},{"element":"waterfall","i1":"drip","i2":"drip","alt":null,"tier":2},{"element":"wood","i1":"water","i2":"vine","alt":null,"tier":2},{"element":"wall","i1":"brick","i2":"mud","alt":null,"tier":2},{"element":"vine","i1":"sprout","i2":"drip","alt":null,"tier":2},{"element":"volcano","i1":"geyser","i2":"lava","alt":null,"tier":2},{"element":"barricade","i1":"wood","i2":"stonewall","alt":null,"tier":3},{"element":"crater","i1":"meteor","i2":"earth","alt":null,"tier":3},{"element":"Excalibur","i1":"stone","i2":"sword","alt":null,"tier":3,"broken":true},{"element":"fort","i1":"wall","i2":"wall","alt":null,"tier":3},{"element":"hammer","i1":"anvil","i2":"wood","alt":null,"tier":3},{"element":"hellfire","i1":"inferno","i2":"fireball","alt":null,"tier":3},{"element":"katana","i1":"whoosh","i2":"sword","alt":null,"tier":3},{"element":"laser","i1":"sun","i2":"glass","alt":null,"tier":3},{"element":"logs","i1":"wood","i2":"wood","alt":null,"tier":3},{"element":"meteor","i1":"fireball","i2":"boulder","alt":null,"tier":3},{"element":"moat","i1":"sea","i2":"wall","alt":null,"tier":3},{"element":"plating","i1":"metal","i2":"wall","alt":null,"tier":3},{"element":"rainbow","i1":"sun","i2":"cloud","alt":null,"tier":3},{"element":"shark","i1":"fireball","i2":"sea","alt":null,"tier":3},{"element":"storm","i1":"rain","i2":"lightning","alt":null,"tier":3},{"element":"sword","i1":"anvil","i2":"blade","alt":null,"tier":3},{"element":"tornado","i1":"twister","i2":"storm","alt":null,"tier":3},{"element":"tsunami","i1":"sea","i2":"quake","alt":null,"tier":3},{"element":"vortex","i1":"twister","i2":"sea","alt":null,"tier":3},{"element":"zap","i1":"lightning","i2":"chain","alt":null,"tier":3},{"element":"earthquake","i1":"quake","i2":"tsunami","alt":null,"tier":4},{"element":"firenado","i1":"tornado","i2":"blaze","alt":null,"tier":4},{"element":"warhammer","i1":"hammer","i2":"hammer","alt":null,"tier":4},{"element":"stormzap","i1":"storm","i2":"zap","alt":null,"tier":4},{"element":"Mjolnir","i1":"warhammer","i2":"stormzap","alt":null,"tier":5}];
+
+/* ---------------- model ---------------- */
+const BASE=['fire','water','earth','wind'];
+const BASECOLOR={fire:'var(--fire)',water:'var(--water)',earth:'var(--earth)',wind:'var(--wind)'};
+// known typo aliases in the source data — used for tree/path resolution, flagged in UI
+const ALIAS={}; // v1.4: all ingredients resolve, no aliases needed
+let recipes=RAW_RECIPES.map(r=>({...r,element:r.element.trim(),added:false}));
+let recMap,tiers,usedIn;
+
+function rebuild(){
+  recMap={};recipes.forEach(r=>recMap[r.element.toLowerCase()]=r);
+  tiers={};BASE.forEach(b=>tiers[b]=0);
+  // v1.4: the game declares official tiers; use them directly.
+  recipes.forEach(r=>{tiers[r.element.toLowerCase()]=(typeof r.tier==='number')?r.tier:null});
+  usedIn={};
+  recipes.forEach(r=>{
+    [r.i1,r.i2].forEach(i=>{
+      const k=(ALIAS[i.toLowerCase()]||i.toLowerCase());
+      (usedIn[k]=usedIn[k]||[]).push(r.element);
+    });
+    if(r.alt){r.alt.split('+').map(s=>s.trim().toLowerCase()).forEach(i=>{
+      const k=ALIAS[i]||i;(usedIn[k]=usedIn[k]||[]).push(r.element+' (alt)');
+    });}
+  });
+}
+function tierOf(name){const n=ALIAS[name.toLowerCase()]||name.toLowerCase();return n in tiers?tiers[n]:null}
+function isBase(n){return BASE.includes(n.toLowerCase())}
+function resolve(name){const n=name.toLowerCase();return ALIAS[n]||n}
+
+// deps: set of unique non-base elements needed (min steps), topological order
+function buildPlan(target){
+  const order=[],seen=new Set(),missing=new Set();
+  const visit=(name,stack)=>{
+    const n=resolve(name);
+    if(isBase(n)||seen.has(n))return;
+    if(stack.has(n))return;
+    const r=recMap[n];
+    if(!r){missing.add(name);return}
+    stack.add(n);
+    visit(r.i1,stack);visit(r.i2,stack);
+    stack.delete(n);
+    seen.add(n);order.push(r);
+  };
+  visit(target,new Set());
+  return {order,missing:[...missing]};
+}
+
+/* ---------------- shared UI bits ---------------- */
+function dotClass(name){
+  const t=tierOf(name);
+  return t==null?'tierdot-x':'tierdot-'+t;
+}
+function upgradeMarker(name){
+  // › N = feeds N working recipes · ◆ = terminal (no known upgrades) · red ◆ = only broken upgrades
+  const cons=consumersOf(name);
+  const usable=cons.filter(c=>!c.r.broken).length;
+  if(usable>0){
+    const m=el('span','upmark','›'+usable);
+    m.title='Feeds '+usable+' recipe'+(usable===1?'':'s')+' — has further upgrades';
+    return m;
+  }
+  const m=el('span','endmark'+(cons.length?' deadend':''),'◆');
+  m.title=cons.length?'Dead end for now — its only upgrade uses a broken recipe':'Terminal element — nothing crafts from this yet. Prime for experimentation.';
+  return m;
+}
+function chip(name,{small=false,meta=false}={}){
+  const b=isBase(name);
+  const c=document.createElement('span');
+  c.className='chip'+(b?' base':'')+(small?' sm':'');
+  const d=document.createElement('span');d.className='dot '+(b?'':dotClass(name));
+  if(b)d.style.background=BASECOLOR[name.toLowerCase()];
+  c.append(d,document.createTextNode(name));
+  if(meta)c.append(upgradeMarker(name));
+  if(!b&&recMap[resolve(name)]){c.onclick=()=>showDetail(recMap[resolve(name)].element)}
+  else if(b){c.style.cursor='default'}
+  return c;
+}
+const el=(t,cls,txt)=>{const e=document.createElement(t);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e};
+
+/* ---------------- tabs ---------------- */
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('nav button').forEach(x=>x.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on');
+  document.getElementById('tab-'+b.dataset.tab).classList.add('on');
+});
+
+/* ---------------- explorer ---------------- */
+function renderGrid(){
+  const q=document.getElementById('q').value.trim().toLowerCase();
+  const tf=document.getElementById('tierfilter').value;
+  const grid=document.getElementById('grid');grid.innerHTML='';
+  const groups={};
+  const list=[...recipes].sort((a,b)=>a.element.localeCompare(b.element));
+  // base tier group
+  if(!q&&tf==='')groups[0]=BASE.slice();
+  list.forEach(r=>{
+    const t=tierOf(r.element);
+    const key=t==null?'?':t;
+    if(q&&!(r.element.toLowerCase().includes(q)||r.i1.toLowerCase().includes(q)||r.i2.toLowerCase().includes(q)))return;
+    if(tf==='T'||tf==='U'){
+      const usable=consumersOf(r.element).filter(c=>!c.r.broken).length;
+      if(tf==='T'&&usable>0)return;
+      if(tf==='U'&&usable===0)return;
+    } else if(tf!==''&&String(key)!==tf)return;
+    (groups[key]=groups[key]||[]).push(r.element);
+  });
+  const keys=Object.keys(groups).sort((a,b)=>(a==='?')-(b==='?')||a-b);
+  keys.forEach(k=>{
+    const g=el('div','tiergroup');
+    g.append(el('div','tlabel',k==='0'?'BASE ELEMENTS':k==='?'?'UNRESOLVED TIER':'TIER '+k));
+    const tc=el('div','tchips');
+    groups[k].forEach(n=>{
+      const c=chip(n,{meta:true});
+      if(recMap[n.toLowerCase()]&&recMap[n.toLowerCase()].added)c.append(Object.assign(el('span','newtag','NEW'),{style:'margin-left:4px'}));
+      tc.append(c);
+    });
+    g.append(tc);grid.append(g);
+  });
+  if(!keys.length)grid.append(el('p','muted','No elements match — try a shorter search.'));
+}
+document.getElementById('q').oninput=renderGrid;
+document.getElementById('tierfilter').onchange=renderGrid;
+
+function treeNode(name,depth){
+  const li=el('li');
+  const n=resolve(name);
+  const r=recMap[n];
+  const node=el('span','tnode'+(isBase(n)?' baseleaf':''));
+  const caret=el('span','caret',r&&!isBase(n)?'▸':'·');
+  const d=el('span','dot '+(isBase(n)?'':dotClass(n)));
+  if(isBase(n))d.style.background=BASECOLOR[n];
+  node.append(caret,d,document.createTextNode(name));
+  if(ALIAS[name.toLowerCase()])node.append(Object.assign(el('span','assume','→ '+ALIAS[name.toLowerCase()]+' (assumed)'),{}));
+  li.append(node);
+  if(r&&!isBase(n)){
+    let open=false,ul=null;
+    node.onclick=e=>{
+      e.stopPropagation();
+      if(!ul){
+        ul=el('ul');
+        ul.append(treeNode(r.i1,depth+1),treeNode(r.i2,depth+1));
+        li.append(ul);
+      }
+      open=!open;ul.style.display=open?'':'none';caret.textContent=open?'▾':'▸';
+    };
+    if(depth<1)node.click();
+  }
+  return li;
+}
+
+function showDetail(name){
+  const r=recMap[name.toLowerCase()];if(!r)return;
+  const box=document.getElementById('detail');box.innerHTML='';
+  const card=el('div','card');
+  const head=el('div','detailhead');
+  const d=el('span','dot '+dotClass(r.element));d.style.width='14px';d.style.height='14px';d.style.borderRadius='50%';
+  head.append(d,el('span','name',r.element));
+  const t=tierOf(r.element);
+  head.append(el('span','badge',t==null?'tier ?':'tier '+t));
+  const plan=buildPlan(r.element);
+  head.append(el('span','badge',plan.order.length+' craft steps'));
+  if(r.added)head.append(el('span','newtag','NEW THIS SESSION'));
+  if(r.broken)head.append(el('span','brokenbadge','RECIPE NOT WORKING'));
+  card.append(head);
+
+  const f=el('div','formula');
+  f.append(chip(r.i1,{small:true}),el('span','op','+'),chip(r.i2,{small:true}),el('span','op','='),el('strong',null,r.element));
+  if(r.broken)f.style.opacity='.55';
+  card.append(f);
+  if(r.broken)card.append(Object.assign(el('div','note warn','This recipe no longer works as of a post-1.4 change — stone + sword stopped producing Excalibur in testing, and the new recipe is unknown. The formula above is kept for reference only; the planner treats this element as obtainable by pickup, not craft. Once you find the real recipe, update it via Add Recipe or tell me and I’ll patch the database.'),{}));
+  if(r.alt){
+    const parts=r.alt.split('+').map(s=>s.trim());
+    const f2=el('div','formula');
+    f2.append(el('span','badge','ALT'),chip(parts[0],{small:true}),el('span','op','+'),chip(parts[1]||'?',{small:true}),el('span','op','='),el('strong',null,r.element));
+    card.append(f2);
+  }
+
+  card.append(el('h3',null,'Full crafting tree — click nodes to expand'));
+  const tree=el('div','tree');const ul=el('ul');ul.style.borderLeft='none';ul.style.paddingLeft='0';ul.style.marginLeft='0';
+  ul.append(treeNode(r.element,0));tree.append(ul);card.append(tree);
+
+  const uses=usedIn[r.element.toLowerCase()]||[];
+  card.append(el('h3',null,'Used in '+uses.length+' recipe'+(uses.length===1?'':'s')));
+  if(uses.length){
+    const uw=el('div');uw.style.display='flex';uw.style.flexWrap='wrap';uw.style.gap='7px';
+    [...new Set(uses)].forEach(u=>uw.append(chip(u.replace(' (alt)',''),{small:true})));
+    card.append(uw);
+  }else card.append(el('p','muted','◆ Terminal element — no known recipe consumes this. Either endgame gear or an undiscovered branch: prime experimentation material.'));
+
+  const go=el('button','btn ghost','Show full build order →');go.style.marginTop='16px';
+  go.onclick=()=>{document.querySelector('[data-tab=path]').click();document.getElementById('pathtarget').value=r.element;renderPath()};
+  card.append(go);
+  box.append(card);
+  card.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+/* ---------------- path ---------------- */
+function fillPathSelect(){
+  const s=document.getElementById('pathtarget');const cur=s.value;
+  s.innerHTML='<option value="">— choose an element —</option>';
+  [...recipes].sort((a,b)=>a.element.localeCompare(b.element)).forEach(r=>{
+    const o=document.createElement('option');o.value=r.element;
+    const t=tierOf(r.element);o.textContent=r.element+(t!=null?'  (tier '+t+')':'');
+    s.append(o);
+  });
+  if(cur)s.value=cur;
+}
+function renderPath(){
+  const tgt=document.getElementById('pathtarget').value;
+  const out=document.getElementById('pathout');out.innerHTML='';
+  if(!tgt)return;
+  const {order,missing}=buildPlan(tgt);
+  const steps=el('div','steps');
+  order.forEach(r=>{
+    const s=el('div','step');
+    s.append(chip(r.i1,{small:true}),el('span','eq','+'),chip(r.i2,{small:true}),el('span','eq','='));
+    const res=el('span','result',r.element);
+    const d=el('span','dot '+dotClass(r.element));d.style.cssText='width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px';
+    const wr=el('span');wr.append(d,res);s.append(wr);
+    s.querySelector('.result').style.cursor='pointer';
+    s.querySelector('.result').onclick=()=>{document.querySelector('[data-tab=explore]').click();showDetail(r.element)};
+    steps.append(s);
+  });
+  out.append(steps);
+  const tr=recMap[tgt.toLowerCase()];
+  if(tr&&tr.broken)out.prepend(Object.assign(el('div','note warn','Warning: the final combine (stone + sword → Excalibur) is confirmed NOT working post-1.4. This path is historical reference only.'),{}));
+  const meta=el('div','pathmeta',order.length+' combines · '+order.filter(r=>tierOf(r.element)!=null).length+' resolved · starts from base elements only');
+  out.append(meta);
+  if(missing.length)out.append(Object.assign(el('div','note warn','Unknown ingredient(s) in this chain: '+missing.join(', ')+'. No recipe exists for them in the database — add one in the Add Recipe tab, or they may be typos.'),{}));
+}
+document.getElementById('pathtarget').onchange=renderPath;
+
+/* ---------------- database table ---------------- */
+let sortKey='element',sortDir=1;
+function renderDB(){
+  const q=document.getElementById('dbq').value.trim().toLowerCase();
+  const tb=document.querySelector('#dbt tbody');tb.innerHTML='';
+  const rows=recipes.map(r=>({
+    ...r,tier:tierOf(r.element),
+    steps:buildPlan(r.element).order.length,
+    uses:(usedIn[r.element.toLowerCase()]||[]).length
+  })).filter(r=>!q||r.element.toLowerCase().includes(q)||r.i1.toLowerCase().includes(q)||r.i2.toLowerCase().includes(q)||(r.alt||'').toLowerCase().includes(q));
+  rows.sort((a,b)=>{
+    let x=a[sortKey],y=b[sortKey];
+    if(x==null)x=sortDir>0?Infinity:-Infinity;if(y==null)y=sortDir>0?Infinity:-Infinity;
+    if(typeof x==='string')return sortDir*x.localeCompare(y);
+    return sortDir*(x-y);
+  });
+  rows.forEach(r=>{
+    const tr=document.createElement('tr');
+    const t1=el('td');const l=el('span','lnk',r.element);l.onclick=()=>{document.querySelector('[data-tab=explore]').click();showDetail(r.element)};
+    const d=el('span','dot '+dotClass(r.element));d.style.cssText='width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:8px';
+    t1.append(d,l);if(r.added)t1.append(document.createTextNode(' '),el('span','newtag','NEW'));if(r.broken)t1.append(document.createTextNode(' '),el('span','brokenbadge','NOT WORKING'));
+    tr.append(t1,
+      el('td',null,r.tier==null?'?':r.tier),
+      el('td',null,r.i1),el('td',null,r.i2),
+      el('td','muted',r.alt||'—'),
+      el('td',null,r.steps),el('td',null,r.uses));
+    tb.append(tr);
+  });
+}
+document.getElementById('dbq').oninput=renderDB;
+document.querySelectorAll('#dbt th').forEach(th=>th.onclick=()=>{
+  const k=th.dataset.k;
+  if(sortKey===k)sortDir*=-1;else{sortKey=k;sortDir=1}
+  renderDB();
+});
+
+/* ---------------- guide ---------------- */
+function renderGuide(){
+  const stats=document.getElementById('stats');stats.innerHTML='';
+  const resolved=recipes.filter(r=>tierOf(r.element)!=null);
+  const maxT=Math.max(...resolved.map(r=>tierOf(r.element)));
+  const withAlt=recipes.filter(r=>r.alt).length;
+  const terminal=recipes.filter(r=>!(usedIn[r.element.toLowerCase()]||[]).length);
+  const deepest=[...resolved].sort((a,b)=>buildPlan(b.element).order.length-buildPlan(a.element).order.length)[0];
+  const mk=(v,lbl)=>{const s=el('div','stat');s.append(el('b',null,String(v)),el('span',null,lbl));return s};
+  stats.append(
+    mk(recipes.length,'recipes in database'),
+    mk(maxT,'tiers deep (from base)'),
+    mk(withAlt,'elements with alt recipes'),
+    mk(terminal.length,'terminal elements (not used in anything yet)'),
+    mk(deepest?deepest.element+' · '+buildPlan(deepest.element).order.length:'—','most expensive craft (steps)')
+  );
+
+  // tier bars
+  const tb=document.getElementById('tierbars');tb.innerHTML='';
+  const counts={};resolved.forEach(r=>{const t=tierOf(r.element);counts[t]=(counts[t]||0)+1});
+  const maxC=Math.max(...Object.values(counts));
+  Object.keys(counts).sort((a,b)=>a-b).forEach(t=>{
+    const b=el('div','bar');
+    b.append(el('span','lbl','tier '+t));
+    const f=el('span','fill');f.style.width=(counts[t]/maxC*420)+'px';f.style.maxWidth='55vw';f.style.background='var(--t'+t+')';
+    b.append(f,el('span','n',counts[t]+' element'+(counts[t]>1?'s':'')));
+    tb.append(b);
+  });
+  const unres=recipes.filter(r=>tierOf(r.element)==null);
+  if(unres.length)tb.append(el('p','muted',unres.length+' element(s) have unresolved tiers due to the data issues noted below: '+unres.map(r=>r.element).join(', ')));
+
+  // usage bars
+  const ub=document.getElementById('usebars');ub.innerHTML='';
+  const usage={};
+  recipes.forEach(r=>[r.i1,r.i2].forEach(i=>{const k=resolve(i);usage[k]=(usage[k]||0)+1}));
+  const top=Object.entries(usage).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  const maxU=top[0][1];
+  top.forEach(([n,c])=>{
+    const b=el('div','bar');
+    b.append(el('span','lbl',n));
+    const f=el('span','fill');f.style.width=(c/maxU*420)+'px';f.style.maxWidth='55vw';
+    f.style.background=isBase(n)?BASECOLOR[n]:'var(--ember)';
+    b.append(f,el('span','n',c+' recipes'));
+    ub.append(b);
+  });
+
+  // strategy
+  const st=document.getElementById('strategy');st.innerHTML='';
+  const stoneUses=(usage['stone']||0),blazeUses=(usage['blaze']||0),wallUses=(usage['wall']||0);
+  const tips=[
+    ['New weapon economy: the anvil line',`v1.4 added anvil (metal+metal) as the smithing hub: anvil+whoosh-blade makes sword, anvil+wood makes hammer. Metal itself got cheaper (fire+earth, one combine), so anvils are only 3 steps in.`],
+    ['Mjolnir got a full quest chain',`Mjolnir is now warhammer+stormzap — ${buildPlan('Mjolnir').order.length} total combines, the longest craft in the game. It merges the smithing branch (anvil→hammer→warhammer) with the storm branch (cloud→lightning+rain→storm, zap→stormzap). Both branches share metal, so bank extras.`],
+    ['Fireball replaced raw blaze in mid-game',`Recipes that used blaze directly (inferno, meteor, shark, molotov, hellfire) now demand fireball (blaze+blaze). Anything fire-flavored effectively costs double blazes now — fire+fire farming matters more than ever.`],
+    ['Whoosh is the sleeper ingredient',`New tier-1 element whoosh (gust+wind) feeds blade, twister, and katana. The wind tree went from filler to a real weapons path: wind→gust→whoosh→blade→sword→katana.`],
+    ['Alt recipes',recipes.filter(r=>r.alt).length?recipes.filter(r=>r.alt).map(r=>r.element+' ('+r.alt+')').join(', ')+' — check both against your stock.':'Only cloud has a documented alt recipe (gust+mist) after 1.4.'],
+    ['Terminal elements are your frontier',`${terminal.length} elements aren’t used in any known recipe yet (e.g. ${terminal.slice(0,7).map(r=>r.element).join(', ')}…). Combine these with workhorses like spike, fireball, and wall to hunt undiscovered 1.4 content — then log finds in Add Recipe.`]
+  ];
+  tips.forEach(([h,p])=>{
+    const d=el('div');d.style.marginBottom='12px';
+    const hh=el('div');hh.style.fontWeight='600';hh.textContent=h;
+    d.append(hh,el('p','muted',p));st.append(d);
+  });
+
+  // data quality
+  document.getElementById('dq').innerHTML=
+    '<strong>24 new elements:</strong> anvil, avalanche, barricade, bomb, chain, earthquake, fireball, firenado, flame, gunpowder, katana, landmine, logs, plague, rainbow, shotgun, spike, stonewall, stormzap, vortex, warhammer, whoosh, wood, zap.<br><br>'+
+    '<strong>7 removed:</strong> cliff, forest, island, sandstorm, snowfall, spikes (now singular <em>spike</em> with a new recipe), tree (replaced by <em>wood</em>/<em>logs</em>).<br><br>'+
+    '<strong>39 recipes reworked</strong>, including: wall is brick+mud (was brick+brick), storm is rain+lightning (was gust+rain), lightning is cloud+metal (was storm+metal — the dependency flipped), sun is inferno+stone, volcano is geyser+lava, Mjolnir is warhammer+stormzap (was lightning+hammer), and blade is metal+whoosh — which retires the old “rock” typo for good. Excalibur’s listed recipe (stone+sword) is confirmed <strong>no longer working</strong> post-1.4 — its real recipe is currently unknown, and it’s flagged throughout the Codex until found. Additionally, <em>plating</em>, <em>plague</em>, and <em>laser</em> appear to be gated behind gold-star level unlocks — they start locked (🔒) in the Workbench; unlock them via Lock mode once your level allows.';
+}
+
+/* ---------------- add ---------------- */
+const added=[];
+document.getElementById('a-add').onclick=()=>{
+  const g=id=>document.getElementById(id).value.trim();
+  const elname=g('a-el'),i1=g('a-i1'),i2=g('a-i2'),alt=g('a-alt')||null;
+  const msg=document.getElementById('addmsg');
+  if(!elname||!i1||!i2){msg.textContent='Element and both ingredients are required.';msg.style.color='#ef6a6a';return}
+  if(recMap[elname.toLowerCase()]){msg.textContent='"'+elname+'" already exists — edit the export instead if the recipe changed.';msg.style.color='#ef6a6a';return}
+  const ti=Math.max(tierOf(i1)??-1,tierOf(i2)??-1);
+  const r={element:elname,i1:i1.toLowerCase(),i2:i2.toLowerCase(),alt:alt,tier:ti>=0?ti+1:undefined,added:true};
+  recipes.push(r);added.push(r);
+  rebuild();refreshAll();
+  ['a-el','a-i1','a-i2','a-alt'].forEach(id=>document.getElementById(id).value='');
+  msg.textContent='Added "'+elname+'" — estimated tier '+(tierOf(elname)==null?'? (an ingredient isn\'t in the database yet)':tierOf(elname))+' (max ingredient tier + 1; correct in the export if the game says otherwise).';
+  msg.style.color='var(--ember2)';
+  const list=document.getElementById('addedlist');list.innerHTML='';
+  added.forEach(a=>{const c=chip(a.element,{small:true});list.append(c)});
+};
+function download(name,text,type){
+  const b=new Blob([text],{type});const u=URL.createObjectURL(b);
+  const a=document.createElement('a');a.href=u;a.download=name;a.click();URL.revokeObjectURL(u);
+}
+document.getElementById('a-export').onclick=()=>{
+  download('icd_recipes.json',JSON.stringify(recipes.map(({added,...r})=>r),null,1),'application/json');
+};
+document.getElementById('a-csv').onclick=()=>{
+  const rows=[['Element','Ingredient 1','Ingredient 2','Alt Recipe','Tier']];
+  recipes.forEach(r=>rows.push([r.element,r.i1,r.i2,r.alt||'',tierOf(r.element)??'?']));
+  download('icd_recipes.csv',rows.map(r=>r.map(x=>'"'+String(x).replace(/"/g,'""')+'"').join(',')).join('\n'),'text/csv');
+};
+
+
+/* ---------------- workbench (quantities + locks + queue + focus + favorites) ---------------- */
+const bench=new Map(); // name -> count
+const lockedSet=new Set(['plating','plague','laser']);
+let lockMode=false;
+const queue=[];
+let focusTarget=null;      // one target whose materials are reserved
+let allocated=new Map();   // name -> reserved count (derived each render)
+const favs=['shark','blade','hammer','meteor'];
+
+const qget=(m,k)=>m.get(k)||0;
+const qadd=(m,k,d)=>{const v=qget(m,k)+d; v>0?m.set(k,v):m.delete(k)};
+const isLocked=n=>lockedSet.has(n.toLowerCase());
+function recipesFor(r){
+  const out=[[r.i1.toLowerCase(),r.i2.toLowerCase()]];
+  if(r.alt){const p=r.alt.split('+').map(s=>s.trim().toLowerCase());if(p.length===2)out.push(p)}
+  return out;
+}
+function pairUsable(a,b){return !isLocked(a)&&!isLocked(b)}
+function affordablePair(r,m){
+  if(r.broken||isLocked(r.element))return undefined;
+  return recipesFor(r).find(([a,b])=>pairUsable(a,b)&&(a===b?qget(m,a)>=2:(qget(m,a)>=1&&qget(m,b)>=1)));
+}
+function maxCrafts(r,m){
+  if(r.broken||isLocked(r.element))return 0;
+  let best=0;
+  recipesFor(r).forEach(([a,b])=>{
+    if(!pairUsable(a,b))return;
+    const k=a===b?Math.floor(qget(m,a)/2):Math.min(qget(m,a),qget(m,b));
+    if(k>best)best=k;
+  });
+  return best;
+}
+function craftOnce(r,m){
+  const p=affordablePair(r,m);if(!p)return false;
+  qadd(m,p[0],-1);qadd(m,p[1],-1);qadd(m,r.element.toLowerCase(),1);
+  return true;
+}
+function planFor(name,m,steps,missing){
+  const n=name.toLowerCase();
+  if(!isLocked(n)&&qget(m,n)>=1){qadd(m,n,-1);return}
+  const r=recMap[n];
+  if(!r||r.broken||isLocked(n)){qadd(missing,n,1);return}
+  const trials=recipesFor(r).map(pair=>{
+    const tm=new Map(m),ts=[],tmiss=new Map(missing);
+    planFor2(pair,r,tm,ts,tmiss);
+    let cnt=0;tmiss.forEach(v=>cnt+=v);
+    return {pair,tm,ts,tmiss,cnt};
+  });
+  trials.sort((a,b)=>a.cnt-b.cnt||a.ts.length-b.ts.length);
+  const best=trials[0];
+  m.clear();best.tm.forEach((v,k)=>m.set(k,v));
+  missing.clear();best.tmiss.forEach((v,k)=>missing.set(k,v));
+  best.ts.forEach(s=>steps.push(s));
+}
+function planFor2(pair,r,m,steps,missing){
+  planFor(pair[0],m,steps,missing);
+  planFor(pair[1],m,steps,missing);
+  steps.push({element:r.element,pair});
+}
+function buildPlanQtyOn(target,baseMap){
+  const m=new Map(baseMap),steps=[],missing=new Map();
+  planFor(target,m,steps,missing);
+  return {steps,missing,leftover:m,feasible:missing.size===0};
+}
+/* allocation: reserve everything the focus plan consumes from the real bench */
+function computeAllocation(){
+  allocated=new Map();
+  if(!focusTarget)return;
+  if(!queue.includes(focusTarget)){focusTarget=null;return}
+  const plan=buildPlanQtyOn(focusTarget,bench);
+  bench.forEach((v,k)=>{
+    const used=v-qget(plan.leftover,k);
+    if(used>0)allocated.set(k,used);
+  });
+}
+function availableBench(){
+  const m=new Map(bench);
+  allocated.forEach((v,k)=>qadd(m,k,-v));
+  return m;
+}
+// general-purpose plan = against UNRESERVED materials
+function buildPlanQty(target){return buildPlanQtyOn(target,availableBench())}
+function missTotal(missing){let c=0;missing.forEach(v=>c+=v);return c}
+function missText(missing){
+  return [...missing.entries()].sort((a,b)=>b[1]-a[1])
+    .map(([k,v])=>(isLocked(k)?'🔒':'')+v+'× '+k+(recMap[k]&&recMap[k].broken?' (recipe unknown)':'')).join(', ');
+}
+function planBlocked(plan){
+  return [...plan.missing.keys()].some(k=>isLocked(k)||(recMap[k]&&recMap[k].broken));
+}
+
+/* -------- annotated path tree -------- */
+function annotatedTree(name,m){
+  const n=name.toLowerCase();
+  if(isLocked(n))return {name:n,status:'locked',children:[]};
+  if(qget(m,n)>=1){qadd(m,n,-1);return {name:n,status:'have',children:[]}}
+  const r=recMap[n];
+  if(!r||r.broken)return {name:n,status:'missing',children:[],broken:!!(r&&r.broken)};
+  const trials=recipesFor(r).map(pair=>{
+    const tm=new Map(m),tmiss=new Map(),ts=[];
+    planFor2(pair,r,tm,ts,tmiss);
+    let cnt=0;tmiss.forEach(v=>cnt+=v);
+    return {pair,cnt};
+  });
+  trials.sort((a,b)=>a.cnt-b.cnt);
+  const pair=trials[0].pair;
+  const kids=[annotatedTree(pair[0],m),annotatedTree(pair[1],m)];
+  return {name:n,status:'craft',children:kids};
+}
+function nameSpan(node_name,nav){
+  const nm=el('span','ptname'+(nav?' navable':''),recMap[node_name]?recMap[node_name].element:node_name);
+  if(nav)nm.onclick=e=>{e.stopPropagation();nav(node_name)};
+  return nm;
+}
+function renderPathNode(node,nav){
+  const li=el('li');
+  const span=el('span','tnode pt-'+node.status);
+  const mark=el('span','ptmark',node.status==='have'?'✓':node.status==='craft'?'⚒':node.status==='locked'?'🔒':'✗');
+  const d=el('span','dot '+(isBase(node.name)?'':dotClass(node.name)));
+  if(isBase(node.name))d.style.background=BASECOLOR[node.name];
+  span.append(mark,d,nameSpan(node.name,nav));
+  if(node.broken)span.append(document.createTextNode(' '),el('span','brokenbadge','RECIPE UNKNOWN'));
+  li.append(span);
+  if(node.children.length){
+    const ul=el('ul');
+    node.children.forEach(c=>ul.append(renderPathNode(c,nav)));
+    li.append(ul);
+  }
+  return li;
+}
+
+/* -------- forward tree -------- */
+function consumersOf(name){
+  const n=name.toLowerCase();
+  const out=[];
+  recipes.forEach(r=>{
+    for(const pair of recipesFor(r)){
+      if(pair[0]===n||pair[1]===n){
+        out.push({r,partner:pair[0]===n?pair[1]:pair[0]});
+        break;
+      }
+    }
+  });
+  return out;
+}
+const FW_DEPTH=2, FW_CAP=6;
+function forwardBranch(name,depth,seen,nav,baseMap){
+  const ul=el('ul');
+  const n=name.toLowerCase();
+  const cons=consumersOf(n)
+    .filter(c=>!seen.has(c.r.element.toLowerCase()))
+    .sort((a,b)=>(tierOf(a.r.element)??99)-(tierOf(b.r.element)??99));
+  cons.slice(0,FW_CAP).forEach(({r,partner})=>{
+    const cn=r.element.toLowerCase();
+    seen.add(cn);
+    const li=el('li');
+    const locked=isLocked(cn),broken=!!r.broken;
+    const span=el('span','tnode '+(locked?'pt-locked':broken?'pt-missing':'pt-craft'));
+    const mark=el('span','ptmark',locked?'🔒':broken?'✗':'⟶');
+    const d=el('span','dot '+dotClass(cn));
+    span.append(mark,d,nameSpan(cn,nav));
+    const haveP=!isLocked(partner)&&qget(baseMap,partner)>=1;
+    span.append(el('span','fw-partner'+(haveP?' haveit':''),'  + '+partner+(haveP?' ✓':'')));
+    if(broken)span.append(document.createTextNode(' '),el('span','brokenbadge','RECIPE UNKNOWN'));
+    li.append(span);
+    if(depth<FW_DEPTH&&!locked&&!broken){
+      const child=forwardBranch(cn,depth+1,seen,nav,baseMap);
+      li.append(child);
+    }
+    ul.append(li);
+  });
+  if(cons.length>FW_CAP){
+    const li=el('li');
+    li.append(el('span','fw-more','+ '+(cons.length-FW_CAP)+' more — click a node to explore, or see the Explorer tab'));
+    ul.append(li);
+  }
+  return ul;
+}
+
+/* -------- navigable path panel -------- */
+function buildPathPanel(targetName,opts){
+  opts=opts||{};
+  const baseMap=opts.baseMap||availableBench();
+  const panel=el('div','pathpanel');
+  const history=[];
+  function render(root){
+    panel.innerHTML='';
+    // breadcrumb
+    const crumb=el('div','ptcrumb');
+    if(history.length){
+      const back=el('button','ptback','◂ '+(recMap[history[history.length-1]]?recMap[history[history.length-1]].element:history[history.length-1]));
+      back.onclick=e=>{e.stopPropagation();render(history.pop())};
+      crumb.append(back);
+    }
+    crumb.append(el('span','ptroot',(recMap[root.toLowerCase()]?recMap[root.toLowerCase()].element:root).toUpperCase()));
+    panel.append(crumb);
+    const nav=next=>{
+      if(next.toLowerCase()===root.toLowerCase())return;
+      history.push(root.toLowerCase());
+      if(opts.onNav)opts.onNav();
+      render(next);
+    };
+    panel.append(el('div','ptlegend','PATH TO BUILD — ✓ on bench · ⚒ craft en route · ✗ need · 🔒 locked · click any name to re-root'));
+    const tree=el('div','tree');
+    const ul=el('ul');ul.style.cssText='border-left:none;padding-left:0;margin-left:0';
+    ul.append(renderPathNode(annotatedTree(root,new Map(baseMap)),nav));
+    tree.append(ul);panel.append(tree);
+
+    panel.append(el('div','ptdivider'));
+    const n=root.toLowerCase();
+    const cons=consumersOf(n);
+    if(cons.length){
+      panel.append(el('div','ptlegend','OPENS UP — recipes this feeds into (+ partner, ✓ if available)'));
+      const ftree=el('div','tree');
+      const rootUl=el('ul');rootUl.style.cssText='border-left:none;padding-left:0;margin-left:0';
+      const rootLi=el('li');
+      const span=el('span','tnode pt-have');
+      const d=el('span','dot '+(isBase(n)?'':dotClass(n)));
+      if(isBase(n))d.style.background=BASECOLOR[n];
+      span.append(el('span','ptmark','◆'),d,el('span','ptname',recMap[n]?recMap[n].element:root));
+      rootLi.append(span);
+      rootLi.append(forwardBranch(n,1,new Set([n]),nav,baseMap));
+      rootUl.append(rootLi);ftree.append(rootUl);panel.append(ftree);
+    } else {
+      panel.append(el('div','ptlegend','OPENS UP — nothing yet'));
+      panel.append(el('p','muted','No known recipe consumes this — a frontier element. Experiment in-game and log discoveries in Add Recipe.'));
+    }
+  }
+  render(targetName);
+  return panel;
+}
+function wrapWithPath(row,targetName,baseMap){
+  const wrap=el('div','pathwrap');
+  wrap.append(row);
+  let built=false,pinned=false;
+  const ensure=()=>{
+    if(!built){
+      wrap.append(buildPathPanel(targetName,{baseMap,onNav:()=>{pinned=true;wrap.classList.add('open')}}));
+      built=true;
+    }
+  };
+  wrap.onmouseenter=()=>{ensure();wrap.classList.add('open')};
+  wrap.onmouseleave=()=>{if(!pinned)wrap.classList.remove('open')};
+  row.addEventListener('click',e=>{
+    if(e.target.closest('.craftbtn')||e.target.closest('.res')||e.target.closest('.starbtn')||e.target.closest('.focusbtn'))return;
+    ensure();pinned=!pinned;
+    wrap.classList.toggle('open',pinned);
+  });
+  return wrap;
+}
+
+/* -------- queue + focus -------- */
+function queueAdd(name){
+  const n=name.toLowerCase();
+  if(!queue.includes(n))queue.push(n);
+  renderStock();
+}
+function starBtn(name){
+  const b=el('button','starbtn',queue.includes(name.toLowerCase())?'★':'☆');
+  b.title='Append to target queue';
+  b.onclick=e=>{e.stopPropagation();queueAdd(name)};
+  return b;
+}
+function setFocus(n){
+  focusTarget=focusTarget===n?null:n;
+  renderStock();
+}
+
+function addToBench(n){qadd(bench,n.toLowerCase(),1);renderStock()}
+
+function paletteChip(name){
+  const b=isBase(name);
+  const locked=isLocked(name);
+  const c=document.createElement('span');
+  c.className='chip'+(b?' base':'')+(locked?' locked':'');
+  const d=document.createElement('span');d.className='dot '+(b?'':dotClass(name));
+  if(b)d.style.background=BASECOLOR[name.toLowerCase()];
+  c.append(d,document.createTextNode((locked?'🔒 ':'')+name),upgradeMarker(name));
+  const q=qget(bench,name.toLowerCase());
+  if(q)c.append(el('span','qty','×'+q));
+  c.draggable=!locked&&!lockMode;
+  c.ondragstart=e=>{e.dataTransfer.setData('text/plain',name);c.classList.add('dragging')};
+  c.ondragend=()=>c.classList.remove('dragging');
+  c.onclick=()=>{
+    if(lockMode){
+      const k=name.toLowerCase();
+      lockedSet.has(k)?lockedSet.delete(k):lockedSet.add(k);
+      renderStock();
+    } else if(!locked){addToBench(name)}
+  };
+  if(locked&&!lockMode)c.title='Locked — turn on Lock mode to unlock';
+  return c;
+}
+function benchChip(name,count){
+  const b=isBase(name);
+  const c=document.createElement('span');
+  c.className='chip have'+(b?' base':'')+(isLocked(name)?' locked':'');
+  const d=document.createElement('span');d.className='dot '+(b?'':dotClass(name));
+  if(b)d.style.background=BASECOLOR[name.toLowerCase()];
+  const minus=el('button','qbtn','−');minus.onclick=e=>{e.stopPropagation();qadd(bench,name,-1);renderStock()};
+  const plus=el('button','qbtn','+');plus.onclick=e=>{e.stopPropagation();qadd(bench,name,1);renderStock()};
+  c.append(d,document.createTextNode((isLocked(name)?'🔒 ':'')+name),el('span','qty','×'+count));
+  const rsv=qget(allocated,name);
+  if(rsv)c.append(el('span','rsv','⛶'+rsv));
+  c.append(minus,plus);
+  if(rsv)c.title=rsv+' reserved for focus: '+focusTarget;
+  else if(isLocked(name))c.title='Locked — held copies are unusable until unlocked';
+  return c;
+}
+
+/* -------- favorites bar -------- */
+function renderFavs(){
+  const fl=document.getElementById('favlist');if(!fl)return;
+  fl.innerHTML='';
+  favs.forEach(n=>{
+    const known=recMap[n]||BASE.includes(n);
+    const item=el('div','favitem');
+    const d=el('span','dot '+(isBase(n)?'':known?dotClass(n):'tierdot-x'));
+    if(isBase(n))d.style.background=BASECOLOR[n];
+    const nm=el('span','fname',recMap[n]?recMap[n].element:n);
+    item.append(d,nm);
+    if(known){
+      const plan=buildPlanQty(n);
+      let st;
+      if(qget(availableBench(),n)>=1&&!isLocked(n))st=el('span','favstat qstatus-ok','held');
+      else if(isLocked(n))st=el('span','favstat qstatus-blocked','🔒');
+      else if(plan.feasible)st=el('span','favstat qstatus-ok','✓'+plan.steps.length);
+      else if(planBlocked(plan))st=el('span','favstat qstatus-blocked','⛔');
+      else st=el('span','favstat qstatus-short',missTotal(plan.missing)+' short');
+      item.append(st);
+    }
+    const x=el('button','favx','✕');
+    x.onclick=e=>{e.stopPropagation();favs.splice(favs.indexOf(n),1);renderFavs()};
+    item.append(x);
+    item.title='Tap to append to target queue';
+    item.onclick=()=>{
+      queueAdd(n);
+      const wb=document.querySelector('[data-tab=stock]');if(wb)wb.click();
+    };
+    fl.append(item);
+  });
+  if(!favs.length)fl.append(el('p','muted','No favorites yet.'));
+}
+
+function renderStock(){
+  computeAllocation();
+  const avail=availableBench();
+
+  // focus banner
+  const fb=document.getElementById('focusbanner');
+  if(focusTarget){
+    fb.style.display='';fb.innerHTML='';
+    const band=el('div','focusband');
+    let rtotal=0;allocated.forEach(v=>rtotal+=v);
+    band.append(el('span',null,'◎ Focusing:'),el('span','fx',recMap[focusTarget]?recMap[focusTarget].element:focusTarget),
+      el('span','muted','· '+rtotal+' item'+(rtotal===1?'':'s')+' reserved — everything below plans around them'));
+    const rel=el('button','focusbtn','Release');
+    rel.onclick=()=>{focusTarget=null;renderStock()};
+    band.append(rel);
+    fb.append(band);
+  } else {fb.style.display='none';fb.innerHTML=''}
+
+  // bench
+  const bc=document.getElementById('benchchips');bc.innerHTML='';
+  [...bench.entries()].sort((a,b)=>(tierOf(a[0])??(isBase(a[0])?0:99))-(tierOf(b[0])??(isBase(b[0])?0:99))||a[0].localeCompare(b[0]))
+    .forEach(([n,q])=>bc.append(benchChip(n,q)));
+  document.getElementById('benchhint').style.display=bench.size?'none':'flex';
+  let total=0;bench.forEach(v=>total+=v);
+  document.getElementById('owncount').textContent=total+' item'+(total===1?'':'s')+' · '+bench.size+' distinct';
+  document.getElementById('lockcount').textContent=lockedSet.size+' locked';
+  const lm=document.getElementById('lockmode');
+  lm.textContent='🔒 Lock mode: '+(lockMode?'ON — tap chips to toggle':'off');
+  lm.classList.toggle('lockmode-on',lockMode);
+
+  // palette
+  const q=(document.getElementById('stockq').value||'').trim().toLowerCase();
+  const grid=document.getElementById('stockgrid');grid.innerHTML='';
+  const groups={};
+  BASE.forEach(b=>{if(!q||b.includes(q))(groups[0]=groups[0]||[]).push(b)});
+  [...recipes].sort((a,b)=>a.element.localeCompare(b.element)).forEach(r=>{
+    if(q&&!r.element.toLowerCase().includes(q))return;
+    const t=tierOf(r.element)??'?';
+    (groups[t]=groups[t]||[]).push(r.element);
+  });
+  Object.keys(groups).sort((a,b)=>(a==='?')-(b==='?')||a-b).forEach(k=>{
+    const g=el('div','tiergroup');
+    g.append(el('div','tlabel',k==='0'?'BASE ELEMENTS':k==='?'?'UNRESOLVED TIER':'TIER '+k));
+    const tc=el('div','tchips');
+    groups[k].forEach(n=>tc.append(paletteChip(n)));
+    g.append(tc);grid.append(g);
+  });
+
+  // queue select
+  const qs=document.getElementById('queuesel');const cur=qs.value;
+  qs.innerHTML='<option value="">— pick a target to append —</option>';
+  [...recipes].sort((a,b)=>a.element.localeCompare(b.element)).forEach(r=>{
+    const o=document.createElement('option');o.value=r.element;o.textContent=r.element;qs.append(o);
+  });
+  qs.value=cur;
+
+  // queue — focused row plans on FULL bench; others on available
+  const ql=document.getElementById('queuelist');ql.innerHTML='';
+  const qitems=queue.map(n=>{
+    const focused=n===focusTarget;
+    const plan=focused?buildPlanQtyOn(n,bench):buildPlanQty(n);
+    const blocked=planBlocked(plan);
+    return {n,focused,plan,blocked,
+      rank:focused?[-1,0]:plan.feasible?[0,plan.steps.length]:blocked?[2,missTotal(plan.missing)]:[1,missTotal(plan.missing)]};
+  }).sort((a,b)=>a.rank[0]-b.rank[0]||a.rank[1]-b.rank[1]);
+  qitems.forEach(({n,focused,plan,blocked})=>{
+    const r=recMap[n];const disp=r?r.element:n;
+    const row=el('div','craftrow');
+    const d=el('span','dot '+dotClass(n));d.style.cssText='width:8px;height:8px;border-radius:50%;display:inline-block';
+    const res=el('span','res',disp);res.onclick=()=>{document.querySelector('[data-tab=explore]').click();showDetail(disp)};
+    row.append(d,res);
+    const fbtn=el('button','focusbtn'+(focused?' on':''),focused?'◎ Focused':'◎ Focus');
+    fbtn.title=focused?'Release reserved materials':'Reserve bench materials for this build';
+    fbtn.onclick=e=>{e.stopPropagation();setFocus(n)};
+    row.append(fbtn);
+    if(qget(bench,n)>=1&&!isLocked(n)){row.append(el('span','badge qstatus-ok','ON BENCH ×'+qget(bench,n)))}
+    else if(plan.feasible){
+      row.append(el('span','badge qstatus-ok','✓ buildable · '+plan.steps.length+' combines'));
+      const btn=el('button','craftbtn','Build chain ▸');
+      btn.onclick=()=>{
+        const fresh=buildPlanQtyOn(n,bench); // building the focus (or any) target spends real bench
+        if(!fresh.feasible){renderStock();return}
+        bench.clear();fresh.leftover.forEach((v,k)=>bench.set(k,v));
+        qadd(bench,n,1);
+        if(focusTarget===n)focusTarget=null;
+        renderStock();
+      };
+      row.append(btn);
+    } else if(blocked){
+      row.append(el('span','badge qstatus-blocked','⛔ blocked'),el('span','needlist',missText(plan.missing)));
+    } else {
+      row.append(el('span','badge qstatus-short',missTotal(plan.missing)+' short'),el('span','needlist','need '+missText(plan.missing)));
+    }
+    const rm=el('button','starbtn','✕');rm.title='Remove from queue';
+    rm.onclick=e=>{e.stopPropagation();queue.splice(queue.indexOf(n),1);if(focusTarget===n)focusTarget=null;renderStock()};
+    row.append(rm);
+    ql.append(wrapWithPath(row,n,focused?bench:avail));
+  });
+  if(!queue.length)ql.append(el('p','muted','Queue is empty — append targets above, tap ☆ on any row below, or tap a favorite in the side bar.'));
+
+  // craftable now (on available materials)
+  const now=document.getElementById('craftnow');now.innerHTML='';
+  const nowList=recipes.filter(r=>maxCrafts(r,avail)>0)
+    .sort((a,b)=>(tierOf(a.element)??99)-(tierOf(b.element)??99)||a.element.localeCompare(b.element));
+  nowList.forEach(r=>{
+    const pair=affordablePair(r,avail);
+    const row=el('div','craftrow');
+    row.append(chip(pair[0],{small:true}),el('span','eq','+'),chip(pair[1],{small:true}),el('span','eq','='));
+    const res=el('span','res',r.element);res.onclick=()=>{document.querySelector('[data-tab=explore]').click();showDetail(r.element)};
+    const d=el('span','dot '+dotClass(r.element));d.style.cssText='width:8px;height:8px;border-radius:50%;display:inline-block';
+    row.append(d,res,el('span','badge','×'+maxCrafts(r,avail)+' possible'),starBtn(r.element));
+    const btn=el('button','craftbtn','Craft 1 ▸');
+    btn.onclick=()=>{craftOnce(r,bench);renderStock()};
+    row.append(btn);
+    now.append(row);
+  });
+  if(!nowList.length)now.append(el('p','muted',bench.size?(focusTarget?'Nothing affordable with unreserved materials — release focus to free them up.':'The bench can’t pay for any single combine — doubles need two copies, and locked elements don’t count.'):'The bench is empty — drop elements in.'));
+
+  // within reach
+  const reach=document.getElementById('reachable');reach.innerHTML='';
+  const directSet=new Set(nowList.map(r=>r.element.toLowerCase()));
+  const reachList=recipes
+    .filter(r=>!r.broken&&!isLocked(r.element)&&!directSet.has(r.element.toLowerCase()))
+    .map(r=>({r,plan:buildPlanQty(r.element)}))
+    .filter(x=>x.plan.feasible&&x.plan.steps.length>1)
+    .sort((a,b)=>a.plan.steps.length-b.plan.steps.length||(tierOf(a.r.element)??99)-(tierOf(b.r.element)??99));
+  reachList.slice(0,30).forEach(({r,plan})=>{
+    const row=el('div','craftrow');
+    const d=el('span','dot '+dotClass(r.element));d.style.cssText='width:8px;height:8px;border-radius:50%;display:inline-block';
+    const res=el('span','res',r.element);res.onclick=()=>{document.querySelector('[data-tab=explore]').click();showDetail(r.element)};
+    row.append(d,res,el('span','badge','tier '+(tierOf(r.element)??'?')),el('span','badge',plan.steps.length+' combines'),starBtn(r.element));
+    const btn=el('button','craftbtn','Build chain ▸');
+    btn.onclick=()=>{
+      const fresh=buildPlanQty(r.element);
+      if(!fresh.feasible){renderStock();return}
+      // spend from real bench: available leftover + reserved portion
+      const newBench=new Map(fresh.leftover);
+      allocated.forEach((v,k)=>qadd(newBench,k,v));
+      bench.clear();newBench.forEach((v,k)=>bench.set(k,v));
+      qadd(bench,r.element.toLowerCase(),1);
+      renderStock();
+    };
+    row.append(btn);
+    reach.append(wrapWithPath(row,r.element,avail));
+  });
+  if(!reachList.length)reach.append(el('p','muted',bench.size?'No multi-step chains affordable with unreserved materials.':'Drop elements in to see chain options.'));
+  if(reachList.length>30)reach.append(el('p','muted','Showing 30 of '+reachList.length+'.'));
+
+  // building towards
+  const dl=document.getElementById('distlist');dl.innerHTML='';
+  const targets=recipes
+    .filter(r=>!r.broken&&!isLocked(r.element)&&(tierOf(r.element)??0)>=3)
+    .map(r=>({r,plan:buildPlanQty(r.element)}))
+    .filter(x=>!x.plan.feasible)
+    .sort((a,b)=>missTotal(a.plan.missing)-missTotal(b.plan.missing)||(tierOf(b.r.element)??0)-(tierOf(a.r.element)??0))
+    .slice(0,14);
+  targets.forEach(({r,plan})=>{
+    const row=el('div','distrow');
+    row.append(el('span','n',missTotal(plan.missing)+' short'));
+    row.append(chip(r.element,{small:true}));
+    row.append(el('span','needlist','need '+missText(plan.missing)));
+    row.append(starBtn(r.element));
+    dl.append(wrapWithPath(row,r.element,avail));
+  });
+  if(!targets.length)dl.append(el('p','muted',bench.size?'Every unlocked tier 3+ target is affordable from unreserved materials. Stacked.':'Drop elements in to see shopping lists.'));
+
+  renderFavs();
+}
+
+// drag & drop wiring
+const benchEl=document.getElementById('bench');
+benchEl.ondragover=e=>{e.preventDefault();benchEl.classList.add('dragover')};
+benchEl.ondragleave=()=>benchEl.classList.remove('dragover');
+benchEl.ondrop=e=>{
+  e.preventDefault();benchEl.classList.remove('dragover');
+  const n=e.dataTransfer.getData('text/plain');
+  if(n&&!isLocked(n))addToBench(n);
+};
+document.getElementById('stockq').oninput=renderStock;
+document.getElementById('stock-clear').onclick=()=>{bench.clear();focusTarget=null;renderStock()};
+document.getElementById('lockmode').onclick=()=>{lockMode=!lockMode;renderStock()};
+document.getElementById('queueadd').onclick=()=>{
+  const v=document.getElementById('queuesel').value;
+  if(v)queueAdd(v);
+};
+document.getElementById('queueclear').onclick=()=>{queue.length=0;focusTarget=null;renderStock()};
+document.getElementById('stock-import').onclick=()=>{
+  const txt=document.getElementById('stockpaste').value;
+  let misses=[];
+  txt.split(/[,\n;]+/).map(s=>s.trim().toLowerCase()).filter(Boolean).forEach(tok=>{
+    const m=tok.match(/^(.+?)(?:\s*[x×]\s*(\d+))?$/);
+    if(!m)return;
+    const n=m[1].trim(),k=m[2]?parseInt(m[2],10):1;
+    if(recMap[n]||BASE.includes(n))qadd(bench,n,k);
+    else misses.push(n);
+  });
+  document.getElementById('stockpaste').value=misses.length?('Not found: '+misses.join(', ')):'';
+  renderStock();
+};
+document.getElementById('favaddbtn').onclick=()=>{
+  const v=document.getElementById('favinput').value.trim().toLowerCase();
+  if(!v)return;
+  if(!recMap[v]&&!BASE.includes(v)){document.getElementById('favinput').value='not found';return}
+  if(!favs.includes(v))favs.push(v);
+  document.getElementById('favinput').value='';
+  renderFavs();
+};
+/* ---------------- boot ---------------- */
+function refreshAll(){
+  document.getElementById('hs-el').textContent=recipes.length+4;
+  document.getElementById('hs-rec').textContent=recipes.length+recipes.filter(r=>r.alt).length;
+  const maxT=Math.max(...recipes.map(r=>tierOf(r.element)).filter(t=>t!=null));
+  document.getElementById('hs-tier').textContent=maxT;
+  const tf=document.getElementById('tierfilter');const cur=tf.value;
+  tf.innerHTML='<option value="">All tiers</option><option value="0">Base</option>';
+  for(let i=1;i<=maxT;i++){const o=document.createElement('option');o.value=i;o.textContent='Tier '+i;tf.append(o)}
+  const o=document.createElement('option');o.value='?';o.textContent='Unresolved';tf.append(o);
+  const oT=document.createElement('option');oT.value='T';oT.textContent='◆ Terminal / dead-end';tf.append(oT);
+  const oU=document.createElement('option');oU.value='U';oU.textContent='› Has upgrades';tf.append(oU);
+  tf.value=cur;
+  renderGrid();fillPathSelect();renderDB();renderGuide();renderStock();
+}
+rebuild();refreshAll();
+showDetail('laser');
+</script>
+</body>
+</html>
