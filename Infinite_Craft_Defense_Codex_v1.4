@@ -279,6 +279,7 @@ td .lnk:hover{color:var(--ember2)}
 
 .qstatus-ok{color:#8fb872}.qstatus-short{color:#c9a44a}.qstatus-blocked{color:#ef6a6a}
 .brokenbadge{font-size:10px;background:#3a2626;color:#ef9a9a;border:1px solid #6e3a3a;border-radius:4px;padding:1px 6px;font-weight:700;letter-spacing:.05em;vertical-align:middle}
+.unvbadge{font-size:10px;background:#3a3226;color:#e8c98a;border:1px solid #6e5a3a;border-radius:4px;padding:1px 6px;font-weight:700;letter-spacing:.05em;vertical-align:middle}
 
 @media(max-width:640px){
   h1{font-size:23px}
@@ -321,7 +322,7 @@ td .lnk:hover{color:var(--ember2)}
       <div class="legrow"><span class="endmark">◆</span> terminal — nothing crafts from it yet</div>
       <div class="legrow"><span class="endmark deadend">◆</span> dead-end — only upgrade uses a broken recipe</div>
       <div class="legrow">🔒 locked (level-gated) · <span class="qty">×4</span> quantity on bench · <span class="rsv">⛶2</span> reserved for focus</div>
-      <div class="legrow"><span class="newtag">NEW</span> added this session · <span class="brokenbadge">NOT WORKING</span> recipe broken/unknown</div>
+      <div class="legrow"><span class="newtag">NEW</span> added this session · <span class="brokenbadge">NOT WORKING</span> recipe confirmed bugged · <span class="unvbadge">UNVERIFIED</span> element exists, recipe not yet confirmed post-update</div>
     </div>
     <div class="legsec">
       <div class="legtitle">PATH PREVIEW (hover popups)</div>
@@ -510,7 +511,7 @@ td .lnk:hover{color:var(--ember2)}
 </aside>
 
 <script>
-const RAW_RECIPES=[{"element":"blaze","i1":"fire","i2":"fire","alt":null,"tier":1},{"element":"dust","i1":"wind","i2":"earth","alt":null,"tier":1},{"element":"stone","i1":"earth","i2":"earth","alt":null,"tier":1},{"element":"metal","i1":"fire","i2":"earth","alt":null,"tier":1},{"element":"mud","i1":"water","i2":"earth","alt":null,"tier":1},{"element":"steam","i1":"fire","i2":"water","alt":null,"tier":1},{"element":"snow","i1":"wind","i2":"water","alt":null,"tier":1},{"element":"gust","i1":"wind","i2":"wind","alt":null,"tier":1},{"element":"drip","i1":"water","i2":"water","alt":null,"tier":1},{"element":"flame","i1":"fire","i2":"wind","alt":null,"tier":1},{"element":"whoosh","i1":"wind","i2":"gust","alt":null,"tier":1},{"element":"ice","i1":"water","i2":"snow","alt":null,"tier":1},{"element":"gunpowder","i1":"fire","i2":"dust","alt":null,"tier":1},{"element":"wave","i1":"water","i2":"gust","alt":null,"tier":1},{"element":"spike","i1":"earth","i2":"stone","alt":null,"tier":1},{"element":"sprout","i1":"water","i2":"mud","alt":null,"tier":1},{"element":"bacteria","i1":"water","i2":"dust","alt":null,"tier":1},{"element":"snowball","i1":"wind","i2":"snow","alt":null,"tier":1},{"element":"sand","i1":"earth","i2":"dust","alt":null,"tier":1},{"element":"glass","i1":"fire","i2":"sand","alt":null,"tier":1},{"element":"spire","i1":"fire","i2":"spike","alt":null,"tier":1},{"element":"mist","i1":"fire","i2":"ice","alt":null,"tier":1},{"element":"vine","i1":"drip","i2":"sprout","alt":null,"tier":2},{"element":"twister","i1":"gust","i2":"whoosh","alt":null,"tier":2},{"element":"stonewall","i1":"stone","i2":"mud","alt":null,"tier":2},{"element":"brick","i1":"blaze","i2":"mud","alt":"flame+mud","tier":2},{"element":"cloud","i1":"steam","i2":"mist","alt":"gust+mist","tier":2},{"element":"fireball","i1":"blaze","i2":"blaze","alt":null,"tier":2},{"element":"quake","i1":"spike","i2":"wave","alt":null,"tier":2},{"element":"wall","i1":"mud","i2":"brick","alt":null,"tier":2},{"element":"waterfall","i1":"drip","i2":"drip","alt":null,"tier":2},{"element":"inferno","i1":"flame","i2":"fireball","alt":null,"tier":2},{"element":"sea","i1":"drip","i2":"waterfall","alt":null,"tier":2},{"element":"time","i1":"sand","i2":"glass","alt":null,"tier":2},{"element":"spikefield","i1":"spike","i2":"spike","alt":null,"tier":2},{"element":"shotgun","i1":"metal","i2":"gunpowder","alt":null,"tier":2},{"element":"plague","i1":"wind","i2":"bacteria","alt":null,"tier":2},{"element":"lava","i1":"blaze","i2":"stone","alt":null,"tier":2},{"element":"anvil","i1":"metal","i2":"metal","alt":null,"tier":2},{"element":"geyser","i1":"spike","i2":"steam","alt":null,"tier":2},{"element":"desert","i1":"sand","i2":"gust","alt":"sand+dust","tier":2},{"element":"icicle","i1":"ice","i2":"spike","alt":null,"tier":2},{"element":"boulder","i1":"stone","i2":"stone","alt":null,"tier":2},{"element":"bottle","i1":"blaze","i2":"glass","alt":null,"tier":2},{"element":"avalanche","i1":"snowball","i2":"snowball","alt":null,"tier":2},{"element":"blade","i1":"metal","i2":"whoosh","alt":null,"tier":2},{"element":"wood","i1":"water","i2":"vine","alt":null,"tier":2},{"element":"lightning","i1":"metal","i2":"cloud","alt":null,"tier":2},{"element":"obsidian","i1":"drip","i2":"lava","alt":null,"tier":2},{"element":"arrow","i1":"spike","i2":"vine","alt":null,"tier":2},{"element":"rain","i1":"cloud","i2":"drip","alt":null,"tier":2},{"element":"chain","i1":"metal","i2":"vine","alt":null,"tier":2},{"element":"bomb","i1":"gunpowder","i2":"brick","alt":null,"tier":2},{"element":"snowfall","i1":"snow","i2":"rain","alt":null,"tier":2},{"element":"firewall","i1":"flame","i2":"wall","alt":null,"tier":2},{"element":"sun","i1":"stone","i2":"inferno","alt":null,"tier":2},{"element":"island","i1":"earth","i2":"sea","alt":null,"tier":2},{"element":"molotov","i1":"bottle","i2":"fireball","alt":null,"tier":3},{"element":"sword","i1":"anvil","i2":"blade","alt":null,"tier":3},{"element":"storm","i1":"rain","i2":"lightning","alt":null,"tier":3},{"element":"fort","i1":"wall","i2":"wall","alt":null,"tier":3},{"element":"zap","i1":"chain","i2":"lightning","alt":null,"tier":3},{"element":"hammer","i1":"wood","i2":"anvil","alt":null,"tier":3},{"element":"landmine","i1":"spikefield","i2":"bomb","alt":null,"tier":3},{"element":"logs","i1":"wood","i2":"wood","alt":null,"tier":3},{"element":"meteor","i1":"boulder","i2":"fireball","alt":null,"tier":3},{"element":"vortex","i1":"tornado","i2":"sea","alt":null,"tier":3},{"element":"iceberg","i1":"icicle","i2":"sea","alt":null,"tier":3},{"element":"hellfire","i1":"inferno","i2":"fireball","alt":null,"tier":3},{"element":"tsunami","i1":"quake","i2":"sea","alt":null,"tier":3},{"element":"volcano","i1":"lava","i2":"geyser","alt":null,"tier":3},{"element":"shark","i1":"sea","i2":"fireball","alt":null,"tier":3},{"element":"tornado","i1":"twister","i2":"storm","alt":null,"tier":3},{"element":"katana","i1":"whoosh","i2":"sword","alt":null,"tier":3},{"element":"Excalibur","i1":"stone","i2":"sword","alt":null,"tier":3,"broken":true},{"element":"crater","i1":"earth","i2":"meteor","alt":null,"tier":3,"broken":true},{"element":"firenado","i1":"hellfire","i2":"tornado","alt":null,"tier":4},{"element":"warhammer","i1":"hammer","i2":"hammer","alt":null,"tier":4},{"element":"zapstorm","i1":"zap","i2":"storm","alt":null,"tier":4},{"element":"Mjolnir","i1":"warhammer","i2":"zapstorm","alt":null,"tier":5}];
+const RAW_RECIPES=[{"element":"blaze","i1":"fire","i2":"fire","alt":null,"tier":1},{"element":"dust","i1":"wind","i2":"earth","alt":null,"tier":1},{"element":"stone","i1":"earth","i2":"earth","alt":null,"tier":1},{"element":"metal","i1":"fire","i2":"earth","alt":null,"tier":1},{"element":"mud","i1":"water","i2":"earth","alt":null,"tier":1},{"element":"steam","i1":"fire","i2":"water","alt":null,"tier":1},{"element":"snow","i1":"wind","i2":"water","alt":null,"tier":1},{"element":"gust","i1":"wind","i2":"wind","alt":null,"tier":1},{"element":"drip","i1":"water","i2":"water","alt":null,"tier":1},{"element":"flame","i1":"fire","i2":"wind","alt":null,"tier":1},{"element":"whoosh","i1":"wind","i2":"gust","alt":null,"tier":1},{"element":"ice","i1":"water","i2":"snow","alt":null,"tier":1},{"element":"gunpowder","i1":"fire","i2":"dust","alt":null,"tier":1},{"element":"wave","i1":"water","i2":"gust","alt":null,"tier":1},{"element":"spike","i1":"earth","i2":"stone","alt":null,"tier":1},{"element":"sprout","i1":"water","i2":"mud","alt":null,"tier":1},{"element":"bacteria","i1":"water","i2":"dust","alt":null,"tier":1},{"element":"snowball","i1":"wind","i2":"snow","alt":null,"tier":1},{"element":"sand","i1":"earth","i2":"dust","alt":null,"tier":1},{"element":"glass","i1":"fire","i2":"sand","alt":null,"tier":1},{"element":"spire","i1":"fire","i2":"spike","alt":null,"tier":1},{"element":"mist","i1":"fire","i2":"ice","alt":null,"tier":1},{"element":"vine","i1":"drip","i2":"sprout","alt":null,"tier":2},{"element":"twister","i1":"gust","i2":"whoosh","alt":null,"tier":2},{"element":"stonewall","i1":"stone","i2":"mud","alt":null,"tier":2},{"element":"brick","i1":"blaze","i2":"mud","alt":"flame+mud","tier":2},{"element":"cloud","i1":"steam","i2":"mist","alt":"gust+mist","tier":2},{"element":"fireball","i1":"blaze","i2":"blaze","alt":null,"tier":2},{"element":"quake","i1":"spike","i2":"wave","alt":null,"tier":2},{"element":"wall","i1":"mud","i2":"brick","alt":null,"tier":2},{"element":"waterfall","i1":"drip","i2":"drip","alt":null,"tier":2},{"element":"inferno","i1":"flame","i2":"fireball","alt":null,"tier":2},{"element":"sea","i1":"drip","i2":"waterfall","alt":null,"tier":2},{"element":"time","i1":"sand","i2":"glass","alt":null,"tier":2},{"element":"spikefield","i1":"spike","i2":"spike","alt":null,"tier":2},{"element":"shotgun","i1":"metal","i2":"gunpowder","alt":null,"tier":2},{"element":"plague","i1":"wind","i2":"bacteria","alt":null,"tier":2},{"element":"lava","i1":"blaze","i2":"stone","alt":null,"tier":2},{"element":"anvil","i1":"metal","i2":"metal","alt":null,"tier":2},{"element":"geyser","i1":"spike","i2":"steam","alt":null,"tier":2},{"element":"desert","i1":"sand","i2":"gust","alt":"sand+dust","tier":2},{"element":"icicle","i1":"ice","i2":"spike","alt":null,"tier":2},{"element":"boulder","i1":"stone","i2":"stone","alt":null,"tier":2},{"element":"bottle","i1":"blaze","i2":"glass","alt":null,"tier":2},{"element":"avalanche","i1":"snowball","i2":"snowball","alt":null,"tier":2},{"element":"blade","i1":"metal","i2":"whoosh","alt":null,"tier":2},{"element":"wood","i1":"water","i2":"vine","alt":null,"tier":2},{"element":"lightning","i1":"metal","i2":"cloud","alt":null,"tier":2},{"element":"obsidian","i1":"drip","i2":"lava","alt":null,"tier":2},{"element":"arrow","i1":"spike","i2":"vine","alt":null,"tier":2},{"element":"rain","i1":"cloud","i2":"drip","alt":null,"tier":2},{"element":"chain","i1":"metal","i2":"vine","alt":null,"tier":2},{"element":"bomb","i1":"gunpowder","i2":"brick","alt":null,"tier":2},{"element":"snowfall","i1":"snow","i2":"rain","alt":null,"tier":2},{"element":"firewall","i1":"flame","i2":"wall","alt":null,"tier":2},{"element":"sun","i1":"stone","i2":"inferno","alt":null,"tier":2},{"element":"island","i1":"earth","i2":"sea","alt":null,"tier":2},{"element":"molotov","i1":"bottle","i2":"fireball","alt":null,"tier":3},{"element":"sword","i1":"anvil","i2":"blade","alt":null,"tier":3},{"element":"storm","i1":"rain","i2":"lightning","alt":null,"tier":3},{"element":"fort","i1":"wall","i2":"wall","alt":null,"tier":3},{"element":"zap","i1":"chain","i2":"lightning","alt":null,"tier":3},{"element":"hammer","i1":"wood","i2":"anvil","alt":null,"tier":3},{"element":"landmine","i1":"spikefield","i2":"bomb","alt":null,"tier":3},{"element":"logs","i1":"wood","i2":"wood","alt":null,"tier":3},{"element":"meteor","i1":"boulder","i2":"fireball","alt":null,"tier":3},{"element":"vortex","i1":"tornado","i2":"sea","alt":null,"tier":3},{"element":"iceberg","i1":"icicle","i2":"sea","alt":null,"tier":3},{"element":"hellfire","i1":"inferno","i2":"fireball","alt":null,"tier":3},{"element":"tsunami","i1":"quake","i2":"sea","alt":null,"tier":3},{"element":"volcano","i1":"lava","i2":"geyser","alt":null,"tier":3},{"element":"shark","i1":"sea","i2":"fireball","alt":null,"tier":3},{"element":"tornado","i1":"twister","i2":"storm","alt":null,"tier":3},{"element":"katana","i1":"whoosh","i2":"sword","alt":null,"tier":3},{"element":"Excalibur","i1":"stone","i2":"sword","alt":null,"tier":3,"broken":true},{"element":"crater","i1":"earth","i2":"meteor","alt":null,"tier":3,"broken":true},{"element":"firenado","i1":"hellfire","i2":"tornado","alt":null,"tier":4},{"element":"warhammer","i1":"hammer","i2":"hammer","alt":null,"tier":4},{"element":"zapstorm","i1":"zap","i2":"storm","alt":null,"tier":4},{"element":"Mjolnir","i1":"warhammer","i2":"zapstorm","alt":null,"tier":5},{"element":"cactus","i1":"vine","i2":"sand","alt":null,"tier":2,"unverified":true},{"element":"barricade","i1":"wood","i2":"stonewall","alt":null,"tier":3,"unverified":true},{"element":"laser","i1":"sun","i2":"glass","alt":null,"tier":3,"unverified":true},{"element":"moat","i1":"sea","i2":"wall","alt":null,"tier":3,"unverified":true},{"element":"plating","i1":"metal","i2":"wall","alt":null,"tier":3,"unverified":true},{"element":"rainbow","i1":"sun","i2":"cloud","alt":null,"tier":3,"unverified":true},{"element":"earthquake","i1":"quake","i2":"tsunami","alt":null,"tier":4,"unverified":true}];
 
 /* ---------------- model ---------------- */
 const BASE=['fire','water','earth','wind'];
@@ -625,14 +626,14 @@ function dotClass(name){
 function upgradeMarker(name){
   // › N = feeds N working recipes · ◆ = terminal (no known upgrades) · red ◆ = only broken upgrades
   const cons=consumersOf(name);
-  const usable=cons.filter(c=>!c.r.broken).length;
+  const usable=cons.filter(c=>!recipeUnusable(c.r)).length;
   if(usable>0){
     const m=el('span','upmark','›'+usable);
     m.title='Feeds '+usable+' recipe'+(usable===1?'':'s')+' — has further upgrades';
     return m;
   }
   const m=el('span','endmark'+(cons.length?' deadend':''),'◆');
-  m.title=cons.length?'Dead end for now — its only upgrade uses a broken recipe':'Terminal element — nothing crafts from this yet. Prime for experimentation.';
+  m.title=cons.length?'Dead end for now — its only upgrades use broken or unverified recipes':'Terminal element — nothing crafts from this yet. Prime for experimentation.';
   return m;
 }
 function chip(name,{small=false,meta=false}={}){
@@ -675,7 +676,7 @@ function affHeader(dom,count){
 function passesFilters(r,q,tf){
   if(q&&!(r.element.toLowerCase().includes(q)||r.i1.toLowerCase().includes(q)||r.i2.toLowerCase().includes(q)))return false;
   if(tf==='T'||tf==='U'){
-    const usable=consumersOf(r.element).filter(c=>!c.r.broken).length;
+    const usable=consumersOf(r.element).filter(c=>!recipeUnusable(c.r)).length;
     if(tf==='T'&&usable>0)return false;
     if(tf==='U'&&usable===0)return false;
   } else if(tf!==''){
@@ -843,12 +844,14 @@ function showDetail(name){
   head.append(el('span','badge',plan.order.length+' craft steps'));
   if(r.added)head.append(el('span','newtag','NEW THIS SESSION'));
   if(r.broken)head.append(el('span','brokenbadge','RECIPE NOT WORKING'));
+  if(r.unverified)head.append(el('span','unvbadge','RECIPE UNVERIFIED'));
   card.append(head);
 
   const f=el('div','formula');
   f.append(chip(r.i1,{small:true}),el('span','op','+'),chip(r.i2,{small:true}),el('span','op','='),el('strong',null,r.element));
-  if(r.broken)f.style.opacity='.55';
+  if(r.broken||r.unverified)f.style.opacity='.55';
   card.append(f);
+  if(r.unverified)card.append(Object.assign(el('div','note','This element is believed to still exist in the game, but the recipe shown is carried over from before the July update and hasn’t been re-verified. The planner treats it as pickup-only. Confirm the combine in-game and I’ll promote it to verified — or correct it if it changed.'),{}));
   if(r.broken)card.append(Object.assign(el('div','note warn','This recipe is bugged in the current game version — the listed combine doesn’t produce the element in testing. The formula is kept for reference; the planner treats this element as obtainable by pickup, not craft. When it gets fixed or the real recipe surfaces, tell me and I’ll patch the database.'),{}));
   if(r.alt){
     const parts=r.alt.split('+').map(s=>s.trim());
@@ -905,6 +908,7 @@ function renderPath(){
   });
   out.append(steps);
   const tr=recMap[tgt.toLowerCase()];
+  if(tr&&tr.unverified)out.prepend(Object.assign(el('div','note','Note: the final combine for this element is unverified since the July update — treat this path as provisional.'),{}));
   if(tr&&tr.broken)out.prepend(Object.assign(el('div','note warn','Warning: the final combine for this element is bugged in the current game version and does not work. This path is reference only.'),{}));
   const meta=el('div','pathmeta',order.length+' combines · '+order.filter(r=>tierOf(r.element)!=null).length+' resolved · starts from base elements only');
   out.append(meta);
@@ -932,7 +936,7 @@ function renderDB(){
     const tr=document.createElement('tr');
     const t1=el('td');const l=el('span','lnk',r.element);l.onclick=()=>{document.querySelector('[data-tab=explore]').click();showDetail(r.element)};
     const d=el('span','dot '+dotClass(r.element));d.style.cssText='width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:8px';
-    t1.append(d,l);if(r.added)t1.append(document.createTextNode(' '),el('span','newtag','NEW'));if(r.broken)t1.append(document.createTextNode(' '),el('span','brokenbadge','NOT WORKING'));
+    t1.append(d,l);if(r.added)t1.append(document.createTextNode(' '),el('span','newtag','NEW'));if(r.broken)t1.append(document.createTextNode(' '),el('span','brokenbadge','NOT WORKING'));if(r.unverified)t1.append(document.createTextNode(' '),el('span','unvbadge','UNVERIFIED'));
     tr.append(t1,
       el('td',null,r.tier==null?'?':r.tier),
       el('td',null,r.i1),el('td',null,r.i2),
@@ -1014,7 +1018,7 @@ function renderGuide(){
   // data quality
   document.getElementById('dq').innerHTML=
     '<strong>5 new/returned elements:</strong> iceberg (icicle+sea), island (earth+sea), snowfall (snow+rain), and renames — spike field → <em>spikefield</em>, stormzap → <em>zapstorm</em>.<br><br>'+
-    '<strong>9 removed:</strong> barricade, cactus, earthquake, laser, moat, plating, rainbow, plus the two old names above. If any of these are merely level-hidden rather than deleted, say so and they can be restored.<br><br>'+
+    '<strong>7 restored as unverified:</strong> barricade, cactus, earthquake, laser, moat, plating, and rainbow are absent from the July recipe list but believed to still be in the game. They’re kept in the Codex with their pre-update recipes flagged <em>UNVERIFIED</em> — pickup-only for the planner until a combine is confirmed in-game.<br><br>'+
     '<strong>9 changes:</strong> plague is wind+bacteria (was bacteria+gust), landmine is spikefield+bomb (was bomb+earth), vortex is tornado+sea (was twister+sea), firenado is hellfire+tornado (was tornado+blaze), Mjolnir is warhammer+zapstorm, molotov and volcano moved to tier 3, and brick (flame+mud) and desert (sand+dust) gained alt recipes.<br><br>'+
     '<strong>2 bugged recipes:</strong> Excalibur (stone+sword) remains broken, and <em>crater (earth+meteor) is newly confirmed bugged</em>. Both are flagged and treated as pickup-only by the planner.';
 }
@@ -1063,6 +1067,7 @@ const favs=['shark','blade','hammer','meteor'];
 const qget=(m,k)=>m.get(k)||0;
 const qadd=(m,k,d)=>{const v=qget(m,k)+d; v>0?m.set(k,v):m.delete(k)};
 const isLocked=n=>lockedSet.has(n.toLowerCase());
+const recipeUnusable=r=>!!(r&&(r.broken||r.unverified));
 function recipesFor(r){
   const out=[[r.i1.toLowerCase(),r.i2.toLowerCase()]];
   if(r.alt){const p=r.alt.split('+').map(s=>s.trim().toLowerCase());if(p.length===2)out.push(p)}
@@ -1070,11 +1075,11 @@ function recipesFor(r){
 }
 function pairUsable(a,b){return !isLocked(a)&&!isLocked(b)}
 function affordablePair(r,m){
-  if(r.broken||isLocked(r.element))return undefined;
+  if(recipeUnusable(r)||isLocked(r.element))return undefined;
   return recipesFor(r).find(([a,b])=>pairUsable(a,b)&&(a===b?qget(m,a)>=2:(qget(m,a)>=1&&qget(m,b)>=1)));
 }
 function maxCrafts(r,m){
-  if(r.broken||isLocked(r.element))return 0;
+  if(recipeUnusable(r)||isLocked(r.element))return 0;
   let best=0;
   recipesFor(r).forEach(([a,b])=>{
     if(!pairUsable(a,b))return;
@@ -1092,7 +1097,7 @@ function planFor(name,m,steps,missing){
   const n=name.toLowerCase();
   if(!isLocked(n)&&qget(m,n)>=1){qadd(m,n,-1);return}
   const r=recMap[n];
-  if(!r||r.broken||isLocked(n)){qadd(missing,n,1);return}
+  if(!r||recipeUnusable(r)||isLocked(n)){qadd(missing,n,1);return}
   const trials=recipesFor(r).map(pair=>{
     const tm=new Map(m),ts=[],tmiss=new Map(missing);
     planFor2(pair,r,tm,ts,tmiss);
@@ -1136,10 +1141,10 @@ function buildPlanQty(target){return buildPlanQtyOn(target,availableBench())}
 function missTotal(missing){let c=0;missing.forEach(v=>c+=v);return c}
 function missText(missing){
   return [...missing.entries()].sort((a,b)=>b[1]-a[1])
-    .map(([k,v])=>(isLocked(k)?'🔒':'')+v+'× '+k+(recMap[k]&&recMap[k].broken?' (recipe unknown)':'')).join(', ');
+    .map(([k,v])=>(isLocked(k)?'🔒':'')+v+'× '+k+(recMap[k]&&recMap[k].broken?' (recipe unknown)':recMap[k]&&recMap[k].unverified?' (unverified)':'')).join(', ');
 }
 function planBlocked(plan){
-  return [...plan.missing.keys()].some(k=>isLocked(k)||(recMap[k]&&recMap[k].broken));
+  return [...plan.missing.keys()].some(k=>isLocked(k)||recipeUnusable(recMap[k]));
 }
 
 /* -------- annotated path tree -------- */
@@ -1148,7 +1153,7 @@ function annotatedTree(name,m){
   if(isLocked(n))return {name:n,status:'locked',children:[]};
   if(qget(m,n)>=1){qadd(m,n,-1);return {name:n,status:'have',children:[]}}
   const r=recMap[n];
-  if(!r||r.broken)return {name:n,status:'missing',children:[],broken:!!(r&&r.broken)};
+  if(!r||recipeUnusable(r))return {name:n,status:'missing',children:[],broken:!!(r&&r.broken),unverified:!!(r&&r.unverified)};
   const trials=recipesFor(r).map(pair=>{
     const tm=new Map(m),tmiss=new Map(),ts=[];
     planFor2(pair,r,tm,ts,tmiss);
@@ -1173,6 +1178,7 @@ function renderPathNode(node,nav){
   if(isBase(node.name))d.style.background=BASECOLOR[node.name];
   span.append(mark,d,nameSpan(node.name,nav));
   if(node.broken)span.append(document.createTextNode(' '),el('span','brokenbadge','RECIPE UNKNOWN'));
+  if(node.unverified)span.append(document.createTextNode(' '),el('span','unvbadge','UNVERIFIED'));
   li.append(span);
   if(node.children.length){
     const ul=el('ul');
@@ -1207,7 +1213,7 @@ function forwardBranch(name,depth,seen,nav,baseMap){
     const cn=r.element.toLowerCase();
     seen.add(cn);
     const li=el('li');
-    const locked=isLocked(cn),broken=!!r.broken;
+    const locked=isLocked(cn),broken=!!r.broken,unv=!!r.unverified;
     const span=el('span','tnode '+(locked?'pt-locked':broken?'pt-missing':'pt-craft'));
     const mark=el('span','ptmark',locked?'🔒':broken?'✗':'⟶');
     const d=el('span','dot '+dotClass(cn));
@@ -1215,8 +1221,9 @@ function forwardBranch(name,depth,seen,nav,baseMap){
     const haveP=!isLocked(partner)&&qget(baseMap,partner)>=1;
     span.append(el('span','fw-partner'+(haveP?' haveit':''),'  + '+partner+(haveP?' ✓':'')));
     if(broken)span.append(document.createTextNode(' '),el('span','brokenbadge','RECIPE UNKNOWN'));
+    if(unv)span.append(document.createTextNode(' '),el('span','unvbadge','UNVERIFIED'));
     li.append(span);
-    if(depth<FW_DEPTH&&!locked&&!broken){
+    if(depth<FW_DEPTH&&!locked&&!broken&&!unv){
       const child=forwardBranch(cn,depth+1,seen,nav,baseMap);
       li.append(child);
     }
@@ -1535,7 +1542,7 @@ function renderStock(){
   const reach=document.getElementById('reachable');reach.innerHTML='';
   const directSet=new Set(nowList.map(r=>r.element.toLowerCase()));
   const reachList=recipes
-    .filter(r=>!r.broken&&!isLocked(r.element)&&!directSet.has(r.element.toLowerCase()))
+    .filter(r=>!recipeUnusable(r)&&!isLocked(r.element)&&!directSet.has(r.element.toLowerCase()))
     .map(r=>({r,plan:buildPlanQty(r.element)}))
     .filter(x=>x.plan.feasible&&x.plan.steps.length>1)
     .sort((a,b)=>a.plan.steps.length-b.plan.steps.length||(tierOf(a.r.element)??99)-(tierOf(b.r.element)??99));
@@ -1564,7 +1571,7 @@ function renderStock(){
   // building towards
   const dl=document.getElementById('distlist');dl.innerHTML='';
   const targets=recipes
-    .filter(r=>!r.broken&&!isLocked(r.element)&&(tierOf(r.element)??0)>=3)
+    .filter(r=>!recipeUnusable(r)&&!isLocked(r.element)&&(tierOf(r.element)??0)>=3)
     .map(r=>({r,plan:buildPlanQty(r.element)}))
     .filter(x=>!x.plan.feasible)
     .sort((a,b)=>missTotal(a.plan.missing)-missTotal(b.plan.missing)||(tierOf(b.r.element)??0)-(tierOf(a.r.element)??0))
