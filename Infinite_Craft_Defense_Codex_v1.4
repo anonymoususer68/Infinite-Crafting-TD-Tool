@@ -147,6 +147,7 @@ td .lnk:hover{color:var(--ember2)}
 }
 .btn:hover{filter:brightness(1.08)}
 .btn.ghost{background:var(--panel2);color:var(--ink);border:1px solid var(--line)}
+.btn.ghost.on{border-color:var(--ember);color:var(--ember2);background:linear-gradient(180deg,#2a2216,#241d13)}
 #addmsg{margin-top:10px;font-size:13.5px}
 .newtag{font-size:10px;background:var(--ember);color:#1a1206;border-radius:4px;padding:1px 6px;font-weight:700;letter-spacing:.05em;vertical-align:middle}
 
@@ -277,6 +278,18 @@ td .lnk:hover{color:var(--ember2)}
 .lnodecaret:hover{color:var(--ember2)}
 .lnodecaret.leaf{cursor:default;color:transparent}
 
+
+.cmptable{width:100%;border-collapse:collapse;margin-top:20px;font-size:14px}
+.cmptable th{font-family:'Cinzel',serif;font-size:17px;font-weight:700;text-align:center;padding:10px;border-bottom:2px solid var(--line);color:var(--ink)}
+.cmptable th.mcol{font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.13em;color:var(--dim);text-align:left;font-weight:500}
+.cmptable td{padding:9px 10px;border-bottom:1px solid #262c3e;text-align:center;font-family:'IBM Plex Mono',monospace}
+.cmptable td.mname{font-family:'IBM Plex Sans',sans-serif;text-align:left;color:var(--dim);font-size:13px}
+.cmptable td.win{color:#8fb872;font-weight:700}
+.cmptable td.lose{opacity:.7}
+.cmpdesc td{font-family:'IBM Plex Sans',sans-serif;font-size:12.5px;font-style:italic;color:var(--dim);text-align:left;border-bottom:1px solid var(--line);padding-bottom:14px}
+.cmplvlnote{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--ember2);display:block;font-weight:400;letter-spacing:.05em}
+.cmpfoot{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--dim);font-style:italic;margin-top:12px}
+
 .qstatus-ok{color:#8fb872}.qstatus-short{color:#c9a44a}.qstatus-blocked{color:#ef6a6a}
 .brokenbadge{font-size:10px;background:#3a2626;color:#ef9a9a;border:1px solid #6e3a3a;border-radius:4px;padding:1px 6px;font-weight:700;letter-spacing:.05em;vertical-align:middle}
 .unvbadge{font-size:10px;background:#3a3226;color:#e8c98a;border:1px solid #6e5a3a;border-radius:4px;padding:1px 6px;font-weight:700;letter-spacing:.05em;vertical-align:middle}
@@ -301,9 +314,9 @@ td .lnk:hover{color:var(--ember2)}
 
 <nav>
   <button data-tab="explore" class="on">Explorer</button>
-  <button data-tab="path">Craft Path</button>
   <button data-tab="db">Database</button>
-  <button data-tab="stock">My Stock</button>
+  <button data-tab="stock">Workbench</button>
+  <button data-tab="compare">Compare</button>
   <button data-tab="guide">Guide &amp; Stats</button>
   <button data-tab="add">Add Recipe</button>
   <button id="legendbtn" style="margin-left:auto">? Legend</button>
@@ -366,18 +379,6 @@ td .lnk:hover{color:var(--ember2)}
   <div id="detail"></div>
 </section>
 
-<!-- ================= PATH ================= -->
-<section class="tab" id="tab-path">
-  <div class="card">
-    <h2>Crafting Path</h2>
-    <p class="muted">Pick a target and get the full ordered build sequence from the four base elements. Each intermediate is crafted exactly once.</p>
-    <div class="row" style="margin-top:12px">
-      <div class="grow"><select id="pathtarget"></select></div>
-    </div>
-    <div id="pathout"></div>
-  </div>
-</section>
-
 <!-- ================= DATABASE ================= -->
 <section class="tab" id="tab-db">
   <div class="card">
@@ -389,7 +390,7 @@ td .lnk:hover{color:var(--ember2)}
       <thead><tr>
         <th data-k="element">Element</th><th data-k="tier">Tier</th>
         <th data-k="i1">Ingredient 1</th><th data-k="i2">Ingredient 2</th>
-        <th data-k="mana">Mana</th><th data-k="dps">DPS</th><th data-k="eff">DPS/Mana</th>
+        <th data-k="role">Role</th><th data-k="mana">Mana</th><th data-k="dps">DPS</th><th data-k="eff">DPS/Mana</th>
         <th data-k="steps">Min Steps</th><th data-k="uses">Used In</th>
       </tr></thead>
       <tbody></tbody>
@@ -459,6 +460,26 @@ td .lnk:hover{color:var(--ember2)}
   </div>
 </section>
 
+
+<!-- ================= COMPARE ================= -->
+<section class="tab" id="tab-compare">
+  <div class="card">
+    <h2>Compare</h2>
+    <p class="muted">Two elements side by side on real game data. Green marks the better value; mana and cooldown count as better when lower.</p>
+    <div class="row" style="margin-top:12px;align-items:center">
+      <div class="grow"><select id="cmpA"></select></div>
+      <div style="flex:0 0 auto;font-family:'Cinzel',serif;color:var(--dim);font-style:italic">vs</div>
+      <div class="grow"><select id="cmpB"></select></div>
+    </div>
+    <div class="stockbar" style="margin-top:10px">
+      <button class="btn ghost cmplvl on" data-lvl="base">Base level</button>
+      <button class="btn ghost cmplvl" data-lvl="max">Max evolution</button>
+      <button class="btn ghost" id="cmpswap">⇄ Swap</button>
+    </div>
+    <div id="cmpout"></div>
+  </div>
+</section>
+
 <!-- ================= GUIDE ================= -->
 <section class="tab" id="tab-guide">
   <div class="card guide">
@@ -482,6 +503,9 @@ td .lnk:hover{color:var(--ember2)}
 
     <h3>How the game actually works</h3>
     <div id="mechanics"></div>
+
+    <h3>Passives — what we've confirmed</h3>
+    <div class="note" id="passivenote"></div>
 
     <h3>July 2026 update changelog</h3>
     <div class="note" id="dq"></div>
@@ -589,6 +613,26 @@ function effOf(r){const d=dpsOf(r);if(d===null)return null;return r.mana>0?d/r.m
 const PASSIVE_LABEL=META.passiveTypes;
 function passiveText(r){return r&&r.pas?('+'+r.pas.v+'% '+(PASSIVE_LABEL[r.pas.t]||r.pas.t)):null}
 const fmt1=v=>Math.round(v*10)/10;
+
+
+/* ---------------- derived roles (from stats, no hand-tagging) ---------------- */
+const ROLE_INFO={
+  'support':{label:'Pure support',desc:'Deals no damage — heals, shields, or buffs the wall.',color:'var(--t2)'},
+  'zone':{label:'Persistent zone',desc:'No cooldown — occupies an area and damages continuously.',color:'var(--t3)'},
+  'tick':{label:'Rapid tick',desc:'Sub-second cooldown — low damage per hit, very high uptime.',color:'var(--t1)'},
+  'burst':{label:'Heavy burst',desc:'Long cooldown, big single hits.',color:'var(--t5)'},
+  'guard':{label:'Close guard',desc:'Very short range — only covers ground near its slot.',color:'var(--t4)'},
+  'attacker':{label:'Standard attacker',desc:'Conventional damage on a moderate cooldown.',color:'var(--t0)'}
+};
+function roleOf(r){
+  if(!r||r.dmg===undefined)return null;
+  if(r.dmg===0)return 'support';
+  if(r.cd===0)return 'zone';
+  if(r.cd<=0.5)return 'tick';
+  if(r.cd>=6)return 'burst';
+  if(r.rng<=10)return 'guard';
+  return 'attacker';
+}
 
 /* ---------------- affinity & lineage ---------------- */
 let affMemo={};
@@ -704,7 +748,9 @@ function affHeader(dom,count){
 }
 function passesFilters(r,q,tf){
   if(q&&!(r.element.toLowerCase().includes(q)||r.i1.toLowerCase().includes(q)||r.i2.toLowerCase().includes(q)))return false;
-  if(tf==='T'||tf==='U'){
+  if(tf.startsWith('R:')){
+    if(roleOf(r)!==tf.slice(2))return false;
+  } else if(tf==='T'||tf==='U'){
     const usable=consumersOf(r.element).filter(c=>!recipeUnusable(c.r)).length;
     if(tf==='T'&&usable>0)return false;
     if(tf==='U'&&usable===0)return false;
@@ -875,6 +921,8 @@ function showDetail(name){
   if(r.broken)head.append(el('span','brokenbadge','RECIPE NOT WORKING'));
   if(r.summonbug)head.append(el('span','brokenbadge','WON’T SUMMON'));
   if(r.conflict)head.append(el('span','unvbadge','SOURCES DISAGREE'));
+  const role=roleOf(r);
+  if(role){const rb=el('span','badge',ROLE_INFO[role].label);rb.style.color=ROLE_INFO[role].color;rb.style.borderColor=ROLE_INFO[role].color;rb.title=ROLE_INFO[role].desc;head.append(rb)}
   if(r.unverified)head.append(el('span','unvbadge','RECIPE UNVERIFIED'));
   card.append(head);
 
@@ -937,49 +985,9 @@ function showDetail(name){
     card.append(uw);
   }else card.append(el('p','muted','◆ Terminal element — no known recipe consumes this. Either endgame gear or an undiscovered branch: prime experimentation material.'));
 
-  const go=el('button','btn ghost','Show full build order →');go.style.marginTop='16px';
-  go.onclick=()=>{document.querySelector('[data-tab=path]').click();document.getElementById('pathtarget').value=r.element;renderPath()};
-  card.append(go);
   box.append(card);
   card.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
-
-/* ---------------- path ---------------- */
-function fillPathSelect(){
-  const s=document.getElementById('pathtarget');const cur=s.value;
-  s.innerHTML='<option value="">— choose an element —</option>';
-  [...recipes].sort((a,b)=>a.element.localeCompare(b.element)).forEach(r=>{
-    const o=document.createElement('option');o.value=r.element;
-    const t=tierOf(r.element);o.textContent=r.element+(t!=null?'  (tier '+t+')':'');
-    s.append(o);
-  });
-  if(cur)s.value=cur;
-}
-function renderPath(){
-  const tgt=document.getElementById('pathtarget').value;
-  const out=document.getElementById('pathout');out.innerHTML='';
-  if(!tgt)return;
-  const {order,missing}=buildPlan(tgt);
-  const steps=el('div','steps');
-  order.forEach(r=>{
-    const s=el('div','step');
-    s.append(chip(r.i1,{small:true}),el('span','eq','+'),chip(r.i2,{small:true}),el('span','eq','='));
-    const res=el('span','result',r.element);
-    const d=el('span','dot '+dotClass(r.element));d.style.cssText='width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px';
-    const wr=el('span');wr.append(d,res);s.append(wr);
-    s.querySelector('.result').style.cursor='pointer';
-    s.querySelector('.result').onclick=()=>{document.querySelector('[data-tab=explore]').click();showDetail(r.element)};
-    steps.append(s);
-  });
-  out.append(steps);
-  const tr=recMap[tgt.toLowerCase()];
-  if(tr&&tr.unverified)out.prepend(Object.assign(el('div','note','Note: the final combine for this element is unverified since the July update — treat this path as provisional.'),{}));
-  if(tr&&tr.broken)out.prepend(Object.assign(el('div','note warn','Warning: the final combine for this element is bugged in the current game version and does not work. This path is reference only.'),{}));
-  const meta=el('div','pathmeta',order.length+' combines · '+order.filter(r=>tierOf(r.element)!=null).length+' resolved · starts from base elements only');
-  out.append(meta);
-  if(missing.length)out.append(Object.assign(el('div','note warn','Unknown ingredient(s) in this chain: '+missing.join(', ')+'. No recipe exists for them in the database — add one in the Add Recipe tab, or they may be typos.'),{}));
-}
-document.getElementById('pathtarget').onchange=renderPath;
 
 /* ---------------- database table ---------------- */
 let sortKey='element',sortDir=1;
@@ -988,6 +996,7 @@ function renderDB(){
   const tb=document.querySelector('#dbt tbody');tb.innerHTML='';
   const rows=recipes.map(r=>({
     ...r,tier:tierOf(r.element),
+    role:roleOf(r)?ROLE_INFO[roleOf(r)].label:'—',
     dps:dpsOf(r)===null?null:Math.round(dpsOf(r)*10)/10,
     eff:(r.mana>0&&dpsOf(r)!==null)?Math.round(dpsOf(r)/r.mana*10)/10:null,
     steps:buildPlan(r.element).order.length,
@@ -1007,6 +1016,7 @@ function renderDB(){
     tr.append(t1,
       el('td',null,r.tier==null?'?':r.tier),
       el('td',null,r.i1),el('td',null,r.i2),
+      Object.assign(el('td','muted',r.role),{}),
       el('td',null,r.mana===undefined?'—':'💠'+r.mana),
       el('td',null,r.dps===null?'—':r.dps),
       el('td',null,r.eff===null?'—':r.eff),
@@ -1092,6 +1102,15 @@ function renderGuide(){
       '<p class="muted">You start each run with <strong>'+c.startMana+' mana</strong> and <strong>'+c.startSlots+' of '+c.maxSlots+' field slots</strong> open, gaining <strong>+'+c.manaPerWave+' max mana per wave</strong> across <strong>'+c.wavesPerChapter+' waves per chapter</strong>. Enemies advance down a vertical field toward your wall; you place up to '+c.maxSlots+' elements in horizontal slots, with everything else sitting in storage behind them.</p>'+
       '<p class="muted">Summoned units are not permanent — each re-summons on its own cooldown. <strong>Passives are the exception:</strong> an element’s passive keeps working from storage as long as you don’t sell or merge it. Once two elements combine (fire + earth → metal), only the new element’s passive applies.</p>'+
       '<p class="muted">Each turn offers 3 random elements — mostly the four bases, but memorized elements can appear too, with the chance dropping sharply as tier rises. <strong>Mana, not materials, is the real constraint on what you can field.</strong></p>';
+  }
+
+  // passive findings
+  const pn=document.getElementById('passivenote');
+  if(pn){
+    pn.innerHTML=
+      '<strong>Confirmed in-game:</strong> passives stack additively — adding more stone raised wall HP each time. They apply from the workbench, not just the 5 deployed slots, so every element you hold is contributing. They persist until the element is consumed by a craft.<br><br>'+
+      '<strong>The merge tax is real:</strong> combining two stones into a boulder destroys both stone passives and installs boulder’s single one. Following that through the whole tree, crafting Mjolnir consumes roughly 204% of passive value to gain 10% — so merging to the top is a large passive loss, and holding many small elements may beat one big one.<br><br>'+
+      '<strong>Still unknown:</strong> whether stacking has a cap or diminishing returns, what the global-damage percentages are relative to, and whether duplicates stack (two stones = +7.4%?). A single test settles most of it: note wall HP with one stone, add a second, then merge them into boulder and compare.';
   }
 
   // data quality
@@ -1707,6 +1726,95 @@ document.getElementById('favaddbtn').onclick=()=>{
   document.getElementById('favinput').value='';
   renderFavs();
 };
+
+/* ---------------- compare ---------------- */
+let cmpLevel='base';
+function cmpFill(){
+  const opts=[...BASE_STATS.map(b=>b.element),...recipes.map(r=>r.element)]
+    .sort((a,b)=>a.localeCompare(b));
+  ['cmpA','cmpB'].forEach(id=>{
+    const s=document.getElementById(id);const cur=s.value;
+    s.innerHTML='';
+    opts.forEach(n=>{const o=document.createElement('option');o.value=n;o.textContent=n;s.append(o)});
+    s.value=cur||'';
+  });
+  if(!document.getElementById('cmpA').value)document.getElementById('cmpA').value='katana';
+  if(!document.getElementById('cmpB').value)document.getElementById('cmpB').value='sword';
+}
+function cmpStats(n){
+  const r=statsOf(n);if(!r)return null;
+  if(cmpLevel==='max'&&r.up&&r.up.length){
+    const t=r.up[r.up.length-1];
+    return {src:r,dmg:t.d,cd:t.c,mana:t.m,rng:r.rng,tick:r.tick,sell:r.sell,desc:t.t,lvl:'Level '+t.l};
+  }
+  return {src:r,dmg:r.dmg,cd:r.cd,mana:r.mana,rng:r.rng,tick:r.tick,sell:r.sell,desc:r.desc,lvl:'Base'};
+}
+function renderCompare(){
+  const out=document.getElementById('cmpout');if(!out)return;
+  const na=document.getElementById('cmpA').value,nb=document.getElementById('cmpB').value;
+  const A=cmpStats(na),B=cmpStats(nb);
+  out.innerHTML='';
+  if(!A||!B){out.append(el('p','muted','Pick two elements.'));return}
+  const dA=A.cd>0?A.dmg/A.cd:(A.tick>0?A.dmg/A.tick:A.dmg);
+  const dB=B.cd>0?B.dmg/B.cd:(B.tick>0?B.dmg/B.tick:B.dmg);
+  const eA=A.mana>0?dA/A.mana:dA, eB=B.mana>0?dB/B.mana:dB;
+  const t=el('table','cmptable');
+  const head=document.createElement('tr');
+  head.innerHTML='<th class="mcol"></th>'+
+    [[na,A],[nb,B]].map(([n,s])=>'<th>'+n+'<span class="cmplvlnote">'+s.lvl+'</span></th>').join('');
+  t.append(head);
+  const dr=document.createElement('tr');dr.className='cmpdesc';
+  dr.innerHTML='<td></td><td>“'+A.desc+'”</td><td>“'+B.desc+'”</td>';
+  t.append(dr);
+  const row=(label,a,b,dir,fmt)=>{
+    fmt=fmt||(v=>v);
+    let ca='',cb='';
+    if(dir==='hi'){if(a>b){ca='win';cb='lose'}else if(b>a){cb='win';ca='lose'}}
+    if(dir==='lo'){if(a<b){ca='win';cb='lose'}else if(b<a){cb='win';ca='lose'}}
+    const tr=document.createElement('tr');
+    tr.innerHTML='<td class="mname">'+label+'</td><td class="'+ca+'">'+fmt(a)+'</td><td class="'+cb+'">'+fmt(b)+'</td>';
+    t.append(tr);
+  };
+  const f1=v=>Math.round(v*10)/10;
+  const roleA=roleOf(A.src),roleB=roleOf(B.src);
+  row('Role',roleA?ROLE_INFO[roleA].label:'—',roleB?ROLE_INFO[roleB].label:'—','none');
+  row('Tier',tierOf(na)??0,tierOf(nb)??0,'none');
+  row('Mana to field',A.mana,B.mana,'lo',v=>'💠'+v);
+  row('Damage',A.dmg,B.dmg,'hi');
+  row('Cooldown',A.cd,B.cd,'lo',v=>v>0?v+'s':'continuous');
+  row('DPS',f1(dA),f1(dB),'hi');
+  row('DPS per mana',f1(eA),f1(eB),'hi');
+  row('Range',A.rng,B.rng,'hi');
+  row('Sell price',A.sell,B.sell,'hi',v=>'💰'+v);
+  row('Evolutions',(A.src.up||[]).length,(B.src.up||[]).length,'hi');
+  row('Passive',passiveText(A.src)||'not reported',passiveText(B.src)||'not reported','none');
+  const bug=r=>r.broken?'🐛 recipe bugged':r.summonbug?'🐛 won’t summon':'—';
+  row('Known bugs',bug(A.src),bug(B.src),'none');
+  const st=r=>{const p=buildPlanQtyOn(r,bench);return p.feasible?'✓ buildable ('+p.steps.length+')':missTotal(p.missing)+' short'};
+  row('From your bench',st(na),st(nb),'none');
+  out.append(t);
+  if(A.cd===0||B.cd===0)out.append(el('p','cmpfoot','Continuous units (cooldown 0) have DPS derived from tick rate instead.'));
+  const notes=[];
+  if(cmpLevel==='max'){
+    [[na,A.src],[nb,B.src]].forEach(([n,r])=>{
+      if(r.up&&r.up.length&&r.up[r.up.length-1].m<r.mana)notes.push(n+' gets CHEAPER when evolved: 💠'+r.mana+' → 💠'+r.up[r.up.length-1].m);
+      if(r.up&&r.up.length&&r.up[r.up.length-1].d<r.dmg)notes.push(n+' loses damage at max evolution ('+r.dmg+' → '+r.up[r.up.length-1].d+') — likely a game bug');
+      if(r.up&&r.up.length&&r.cd>0&&r.up[r.up.length-1].c===0)notes.push(n+' becomes continuous when evolved (cooldown → 0)');
+    });
+  }
+  notes.forEach(n=>out.append(el('p','cmpfoot','⚠ '+n)));
+}
+['cmpA','cmpB'].forEach(id=>{const s=document.getElementById(id);if(s)s.onchange=renderCompare});
+document.querySelectorAll('.cmplvl').forEach(b=>b.onclick=()=>{
+  cmpLevel=b.dataset.lvl;
+  document.querySelectorAll('.cmplvl').forEach(x=>x.classList.toggle('on',x===b));
+  renderCompare();
+});
+(function(){const sw=document.getElementById('cmpswap');if(sw)sw.onclick=()=>{
+  const a=document.getElementById('cmpA'),b=document.getElementById('cmpB');
+  const t=a.value;a.value=b.value;b.value=t;renderCompare();
+}})();
+
 /* ---------------- boot ---------------- */
 function refreshAll(){
   document.getElementById('hs-el').textContent=recipes.length+4;
@@ -1719,8 +1827,9 @@ function refreshAll(){
   const o=document.createElement('option');o.value='?';o.textContent='Unresolved';tf.append(o);
   const oT=document.createElement('option');oT.value='T';oT.textContent='◆ Terminal / dead-end';tf.append(oT);
   const oU=document.createElement('option');oU.value='U';oU.textContent='› Has upgrades';tf.append(oU);
+  Object.entries(ROLE_INFO).forEach(([k,v])=>{const o=document.createElement('option');o.value='R:'+k;o.textContent='◈ '+v.label;tf.append(o)});
   tf.value=cur;
-  renderGrid();fillPathSelect();renderDB();renderGuide();renderStock();
+  renderGrid();renderDB();renderGuide();renderStock();cmpFill();renderCompare();
 }
 rebuild();refreshAll();
 showDetail('laser');
